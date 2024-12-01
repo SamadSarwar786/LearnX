@@ -1,17 +1,21 @@
 package com.learnx.learnx_backend.Models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.learnx.learnx_backend.Enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Table(name = "users")
 @Data
-public class User {
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +24,7 @@ public class User {
     private String name;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(unique = true, nullable = false)
@@ -28,7 +33,15 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "studentTookCourse")
-    private Set<Enrollment> enrollments = new HashSet<>();
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        return authorities;
+    }
 
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 }

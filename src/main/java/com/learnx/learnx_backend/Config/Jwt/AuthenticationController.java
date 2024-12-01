@@ -1,8 +1,11 @@
 package com.learnx.learnx_backend.Config.Jwt;
 
+import com.learnx.learnx_backend.Dtos.RequestDtos.InstructorDto;
 import com.learnx.learnx_backend.Dtos.RequestDtos.LoginUserDto;
-import com.learnx.learnx_backend.Dtos.RequestDtos.RegisterUserDto;
+import com.learnx.learnx_backend.Dtos.RequestDtos.StudentDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.LoginResponse;
+import com.learnx.learnx_backend.Models.Instructor;
+import com.learnx.learnx_backend.Models.Student;
 import com.learnx.learnx_backend.Models.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,12 +26,19 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto registerUserDto) throws Exception {
-        User registeredUser = authenticationService.signup(registerUserDto);
-
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    @PostMapping("/register/instructor")
+    public ResponseEntity<User> register(@Valid @RequestBody InstructorDto instructorDto) throws Exception {
+          Instructor instructor =  authenticationService.signUp(instructorDto);
+        return new ResponseEntity<>(instructor, HttpStatus.CREATED);
     }
+
+    @PostMapping("/register/student")
+    public ResponseEntity<User> register(@Valid @RequestBody StudentDto studentDto) throws Exception {
+        Student student =  authenticationService.signUp(studentDto);
+        return new ResponseEntity<>(student, HttpStatus.CREATED);
+    }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginUserDto loginUserDto) throws Exception {

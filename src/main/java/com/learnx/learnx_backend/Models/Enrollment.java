@@ -1,4 +1,5 @@
 package com.learnx.learnx_backend.Models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,22 +15,15 @@ public class Enrollment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User studentTookCourse;
+    @JoinColumn(name = "student_id", nullable = false)
+    @JsonIgnore  // to prevent infinite recursion (circular reference) when serializing the object to JSON
+    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
-    private Course courseTaken;
+    @JsonIgnore  // to prevent infinite recursion (circular reference) when serializing the object to JSON
+    private Course course;
 
-    private LocalDateTime enrolledAt; // Tracks when the student enrolled
+    private LocalDateTime EnrollmentDateTime; // Tracks when the student enrolled
 
-    private boolean isCompleted; // Tracks if the student has completed the course
-    private boolean isPaid; // Tracks if the student has paid for the course
-
-    private double progress;
-
-    @PrePersist
-    protected void onCreate() {
-        this.enrolledAt = LocalDateTime.now();
-    }
 }

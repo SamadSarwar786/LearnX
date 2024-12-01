@@ -23,9 +23,9 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
-    private User instructor;
+    private Instructor instructor;
 
-    @OneToMany(mappedBy = "courseTaken")
+    @OneToMany(mappedBy = "course")
     private Set<Enrollment> enrollments = new HashSet<>();
 
 }
