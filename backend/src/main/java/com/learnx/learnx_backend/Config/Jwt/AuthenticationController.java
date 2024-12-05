@@ -7,6 +7,7 @@ import com.learnx.learnx_backend.Dtos.ResponseDtos.LoginResponse;
 import com.learnx.learnx_backend.Models.Instructor;
 import com.learnx.learnx_backend.Models.Student;
 import com.learnx.learnx_backend.Models.User;
+import com.learnx.learnx_backend.Services.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,13 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
+    private final EmailService emailService;
+
+    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, EmailService emailService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.emailService = emailService;
+
     }
 
     @PostMapping("/register/instructor")
@@ -34,7 +39,9 @@ public class AuthenticationController {
 
     @PostMapping("/register/student")
     public ResponseEntity<User> register(@Valid @RequestBody StudentDto studentDto) throws Exception {
+
         Student student =  authenticationService.signUp(studentDto);
+        // emailService.sendEmail(student.getEmail(), "Welcome to LearnX", "Thank you for registering with LearnX. We are excited to have you on board!");
         return new ResponseEntity<>(student, HttpStatus.CREATED);
     }
 
