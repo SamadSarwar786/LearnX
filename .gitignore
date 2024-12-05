@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Ignore application properties containing sensitive data
+application.properties
+
+# Optionally ignore YAML configuration as well
+application.yml
