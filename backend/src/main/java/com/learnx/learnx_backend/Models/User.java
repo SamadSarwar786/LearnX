@@ -3,6 +3,7 @@ package com.learnx.learnx_backend.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.learnx.learnx_backend.Enums.Role;
+import com.learnx.learnx_backend.Enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,9 @@ public abstract class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

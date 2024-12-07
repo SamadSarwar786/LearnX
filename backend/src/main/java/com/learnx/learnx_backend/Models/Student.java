@@ -14,9 +14,9 @@ import java.util.Set;
 @Entity
 @Table(name = "students")
 @Data
-public class Student extends User{
+public class Student extends User {
 
-     private String degree;
+    private String degree;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
