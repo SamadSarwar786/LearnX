@@ -25,7 +25,7 @@ public class EnrollmentService {
     public Enrollment enrollStudent(Student student, Long courseId) throws Exception {
         Course course = courseRepo.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Invalid course ID"));
 
-        if(enrollmentRepo.findByCourseAndStudent(course,student).isPresent()){
+        if(isUserEnrolled(course.getId(),student.getId())){
             throw new Exception("Student is already enrolled in this course");
         }
 
@@ -56,5 +56,9 @@ public class EnrollmentService {
             dto.setSalesCount((Long) result[2]);
             return dto;
         }).toList();
+    }
+
+    public boolean isUserEnrolled(Long courseId, Long studentId) {
+        return enrollmentRepo.findByCourseIdAndStudentId(courseId, studentId).isPresent();
     }
 }

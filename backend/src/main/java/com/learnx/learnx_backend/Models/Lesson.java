@@ -1,11 +1,18 @@
 package com.learnx.learnx_backend.Models;
 
+import com.learnx.learnx_backend.Enums.Status;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "lessons")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +26,16 @@ public class Lesson {
     private String title;
 
     @Lob
-    private String content; // Using @Lob for potentially large text content
+    private String description; // Using @Lob for potentially large text content
 
     @Column(nullable = false)
-    private String imageUrl;
-
+    private String thumbnailUrl;
+//
     @Column(nullable = false)
-    private String videoUrl;
+    private String videoUrl;  //videoKey
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
 }

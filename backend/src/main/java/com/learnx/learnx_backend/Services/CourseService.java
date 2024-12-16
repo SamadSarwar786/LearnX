@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -26,13 +27,7 @@ public class CourseService {
     @Autowired
     ModelMapper modelMapper;
 
-    public CourseResDto createCourse(CourseDto courseDto) {
-
-        Long instructorId = courseDto.getInstructorId();
-        // Check if the instructor exists in the database
-
-        Instructor instructor = instructorRepo.findById(instructorId).orElseThrow(() -> new ResourceNotFoundException("Instructor not found"));
-
+    public CourseResDto createCourse(CourseDto courseDto, Instructor instructor) {
         Course course = new Course();
         course.setTitle(courseDto.getTitle());
         course.setInstructor(instructor);
@@ -67,5 +62,12 @@ public class CourseService {
                     .instructorName(course.getInstructor().getName()).build();
         }).toList();
     }
+
+    Course getCourseById(Long courseId) {
+        Optional<Course> course = courseRepo.findById(courseId);
+        return course.orElse(null);
+    }
 }
+
+
 

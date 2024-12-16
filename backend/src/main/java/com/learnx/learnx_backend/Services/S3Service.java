@@ -42,16 +42,16 @@ public class S3Service {
 
     public URL generatePresignedUrlForPutObject(
             String bucketName,
-            String key,
-            String contentType
+            String key
+//            String contentType
 //            long contentLength
 //            Map<String, String> metadata
     ) {
         // Build the PutObjectRequest with extra details
         PutObjectRequest.Builder putObjectRequestBuilder = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(key)
-                .contentType(contentType);
+                .key(key);
+//                .contentType(contentType);
 //                .contentLength(contentLength);
 
         // Add additional metadata if needed

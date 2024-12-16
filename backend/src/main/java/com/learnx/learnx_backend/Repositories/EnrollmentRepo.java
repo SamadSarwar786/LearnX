@@ -16,7 +16,8 @@ public interface EnrollmentRepo extends JpaRepository<Enrollment, Long> {
 
     List<Enrollment> findByCourse(Course course);  // Get all enrollments for a course
 
-    Optional<Enrollment> findByCourseAndStudent(Course course, User student);  // Find a specific enrollment by course and student
+    @Query("SELECT e FROM Enrollment e WHERE e.course.id = :courseId AND e.student.id = :studentId")
+    Optional<Enrollment> findByCourseIdAndStudentId(@Param("courseId") Long courseId, @Param("studentId") Long studentId);  // Find a specific enrollment by course and student
 
     @Query("SELECT e.course.id, e.course.title, COUNT(e) " +
             "FROM Enrollment e " +

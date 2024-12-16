@@ -33,8 +33,8 @@ public class InstructorController {
     }
 
     @PostMapping("/course")
-    public ResponseEntity<CourseResDto> addCourse(@Valid @RequestBody CourseDto courseDto) {
-        CourseResDto createdCourse = courseService.createCourse(courseDto);
+    public ResponseEntity<CourseResDto> addCourse(@Valid @RequestBody CourseDto courseDto, @AuthenticationPrincipal Instructor instructor) {
+        CourseResDto createdCourse = courseService.createCourse(courseDto, instructor);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 
