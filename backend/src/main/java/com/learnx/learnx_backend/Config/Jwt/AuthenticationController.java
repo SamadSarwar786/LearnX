@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 public class AuthenticationController {
 
@@ -24,15 +26,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register/instructor")
-    public ResponseEntity register(@Valid @RequestBody InstructorDto instructorDto) throws Exception {
+    public ResponseEntity<Object> register(@Valid @RequestBody InstructorDto instructorDto) throws Exception {
         authenticationService.signUp(instructorDto);
-        return new ResponseEntity("Instructor is registered successfully , Please verify your email", HttpStatus.CREATED);
+        Map<String, Object> response = Map.of("status", "success", "message", "Instructor is registered successfully , Please verify your email");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/register/student")
-    public ResponseEntity register(@Valid @RequestBody StudentDto studentDto) throws Exception {
+    public ResponseEntity<Object> register(@Valid @RequestBody StudentDto studentDto) throws Exception {
         authenticationService.signUp(studentDto);
-        return new ResponseEntity("Student is registered successfully , Please verify your email", HttpStatus.CREATED);
+        Map<String, Object> response = Map.of("status", "success", "message", "Student is registered successfully , Please verify your email");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
