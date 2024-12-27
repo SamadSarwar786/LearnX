@@ -27,6 +27,9 @@ public class Lesson {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private Long sequenceNumber;
+
     @Lob
     private String description; // Using @Lob for potentially large text content
 

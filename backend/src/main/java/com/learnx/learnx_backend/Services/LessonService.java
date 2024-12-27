@@ -67,17 +67,21 @@ public class LessonService {
         if (!Objects.equals(course.getInstructor().getId(), instructor.getId())) {
             throw new ResourceNotFoundException("this course does not belong to instructor");
         }
-        String uuid = UUID.randomUUID().toString();
-        String url = generateUrl(instructor.getId(), course.getId(), uuid);
-        Lesson lesson = Lesson.builder().title(lessonDto.getTitle())
-                .description(lessonDto.getDescription())
-                .course(course)
-                .videoUrl(url)
-                .thumbnailUrl(url)
-                .status(Status.PENDING)
-                .build();
+        Lesson savedLesson = lessonRepo.findBySequenceNumber(lessonDto.getSequenceNumber()).orElse(null);
 
-        Lesson savedLesson = lessonRepo.save(lesson);
+        if (savedLesson == null) {
+            String uuid = UUID.randomUUID().toString();
+            String url = generateUrl(instructor.getId(), course.getId(), uuid);
+            Lesson lesson = Lesson.builder().title(lessonDto.getTitle())
+                    .description(lessonDto.getDescription())
+                    .course(course)
+                    .videoUrl(url)
+                    .thumbnailUrl(url)
+                    .sequenceNumber(lessonDto.getSequenceNumber())
+                    .status(Status.PENDING)
+                    .build();
+            savedLesson = lessonRepo.save(lesson);
+        }
 
         URL videoPreSignedUrl = s3Service.generatePresignedUrlForPutObject(videoBucketName, savedLesson.getVideoUrl());
         URL thumnailPreSingedUrl = s3Service.generatePresignedUrlForPutObject(thumbnailBucketName, savedLesson.getThumbnailUrl());

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class LessonDto {
+   private Long sequenceNumber;
    private String title;
    private String description;
 }
