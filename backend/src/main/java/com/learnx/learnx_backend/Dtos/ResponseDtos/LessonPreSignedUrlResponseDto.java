@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LessonResponseDto {
+public class LessonPreSignedUrlResponseDto {
     Long lessonId;
-//    URL preSignedThumbnailUrl;
     String title;
+    String preSignedThumbnailUrl;
     String preSignedVideoUrl;
 }

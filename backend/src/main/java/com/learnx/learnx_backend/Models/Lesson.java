@@ -1,5 +1,6 @@
 package com.learnx.learnx_backend.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.learnx.learnx_backend.Enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class Lesson {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
+    @JsonIgnore
     private Course course;
 
     @Column(nullable = false)
@@ -30,8 +32,9 @@ public class Lesson {
 
     @Column(nullable = false)
     private String thumbnailUrl;
-//
+
     @Column(nullable = false)
+    @JsonIgnore
     private String videoUrl;  //videoKey
 
     @Enumerated(EnumType.STRING)

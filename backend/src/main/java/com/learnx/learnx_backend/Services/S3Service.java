@@ -23,9 +23,6 @@ public class S3Service {
     @Autowired
     private S3Client s3Client;
 
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
-
     public URL generatePreSignedUrlForGetObject(String bucketName, String key) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
