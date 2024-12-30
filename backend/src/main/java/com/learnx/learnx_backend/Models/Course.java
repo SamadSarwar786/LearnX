@@ -18,7 +18,7 @@ public class Course {
     @Column(nullable = false)
     private String title;
 
-    @Lob
+    @Column
     private String description;
 
     @ManyToOne

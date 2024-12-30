@@ -30,7 +30,7 @@ public class Lesson {
     @Column(nullable = false)
     private Long sequenceNumber;
 
-    @Lob
+    @Column
     private String description; // Using @Lob for potentially large text content
 
     @Column(nullable = false)

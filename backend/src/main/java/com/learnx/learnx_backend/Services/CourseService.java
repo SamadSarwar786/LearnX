@@ -35,6 +35,7 @@ public class CourseService {
         course = courseRepo.save(course);
 
         return CourseResDto.builder()
+                .courseId(course.getId())
                 .courseName(course.getTitle())
                 .instructorName(instructor.getName())
                 .courseDescription(course.getDescription())
