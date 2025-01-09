@@ -1,0 +1,129 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Checkout</title>-->
+<!--    <script src="https://js.braintreegateway.com/web/dropin/1.32.0/js/dropin.min.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Checkout</h1>-->
+<!--&lt;!&ndash; Hidden client token for debugging &ndash;&gt;-->
+<!--&lt;!&ndash; Uncomment this for debugging only &ndash;&gt;-->
+<!--&lt;!&ndash; <h2 th:text="${clientToken}"></h2>&ndash;&gt;-->
+
+<!--<form id="payment-form" th:action="@{/braintree/process-payment}" method="POST">-->
+<!--    <div id="dropin-container"></div>-->
+<!--    <input type="hidden" name="nonce" id="nonce">-->
+<!--    <input type="hidden" id="amount" name="amount" placeholder="Enter Amount" required min="0.01" step="0.01">-->
+<!--    <button type="submit" id="submit-button">Pay</button>-->
+<!--</form>-->
+
+<!--<script th:inline="javascript">-->
+<!--    // Load the client token from the server-->
+<!--    const clientToken = /*[[${clientToken}]]*/;-->
+<!--    console.log("Client Token: ", clientToken);-->
+
+<!--    if (!clientToken) {-->
+<!--        console.error("Client Token is missing or invalid.");-->
+<!--        alert("Payment system is not available. Please try again later.");-->
+<!--    } else {-->
+<!--        braintree.dropin.create({-->
+<!--            authorization: clientToken,-->
+<!--            container: '#dropin-container'-->
+<!--        }, (err, dropinInstance) => {-->
+<!--            if (err) {-->
+<!--                console.error("Error initializing Braintree Drop-in:", err);-->
+<!--                alert("Unable to load payment form. Please refresh and try again.");-->
+<!--                return;-->
+<!--            }-->
+
+<!--            const form = document.querySelector('#payment-form');-->
+<!--            form.addEventListener('submit', (event) => {-->
+<!--                event.preventDefault();-->
+<!--                dropinInstance.requestPaymentMethod((err, payload) => {-->
+<!--                    if (err) {-->
+<!--                        console.error("Error requesting payment method:", err);-->
+<!--                        alert("Failed to process payment. Please try again.");-->
+<!--                        return;-->
+<!--                    }-->
+
+<!--                    // Add the nonce to the form and submit-->
+<!--                    document.querySelector('#nonce').value = payload.nonce;-->
+<!--                    form.submit();-->
+<!--                });-->
+<!--            });-->
+<!--        });-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+    <script src="https://js.braintreegateway.com/web/dropin/1.32.0/js/dropin.min.js"></script>
+</head>
+<body>
+<h1>Checkout</h1>
+
+<div id="dropin-container"></div>
+<button id="pay-button">Pay $<span id="amount-display"></span></button>
+
+<script>
+    // Pass the client token and amount from the backend
+    const clientToken = /*[[${clientToken}]]*/ '';
+    const amount = /*[[${amount}]]*/;
+
+    // Display the amount (if needed)
+    document.getElementById('amount-display').innerText = amount.toFixed(2);
+
+    // Initialize Braintree Drop-in UI
+    braintree.dropin.create({
+        authorization: clientToken,
+        container: '#dropin-container'
+    }, (err, dropinInstance) => {
+        if (err) {
+            console.error("Error initializing Braintree Drop-in:", err);
+            alert("Unable to load payment system. Please try again.");
+            return;
+        }
+
+        document.getElementById('pay-button').addEventListener('click', () => {
+            dropinInstance.requestPaymentMethod((err, payload) => {
+                if (err) {
+                    console.error("Error requesting payment method:", err);
+                    alert("Failed to process payment. Please try again.");
+                    return;
+                }
+
+                // Send the nonce and amount to the backend for processing
+                fetch('/braintree/process-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nonce: payload.nonce,
+                        amount: amount
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Payment successful!");
+                        // Redirect or show success message
+                    } else {
+                        alert("Payment failed: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error processing payment:", error);
+                    alert("An error occurred. Please try again.");
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>
+

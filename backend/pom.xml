@@ -115,6 +115,12 @@
 			<artifactId>s3</artifactId>
 			<version>2.29.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.braintreepayments.gateway/braintree-java -->
+		<dependency>
+			<groupId>com.braintreepayments.gateway</groupId>
+			<artifactId>braintree-java</artifactId>
+			<version>3.37.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -135,6 +141,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+<!--				<mainClass>com.learnx.learnx_backend.LearnXBackendApplication</mainClass>-->
 				</configuration>
 			</plugin>
 		</plugins>
