@@ -8,7 +8,7 @@ export default function Payment() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   
-  const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWFuQGdtYWlsLmNvbSIsImlhdCI6MTczNjQ1MzA5MSwiZXhwIjoxNzM2NDU2NjkxfQ.HYmc0_H5WDh0mOWkq55rwrYR6pGbaW9tyL7DxVVYX_0"
+  const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWFuQGdtYWlsLmNvbSIsImlhdCI6MTczNjYwMjQ5MCwiZXhwIjoxNzM2NjA2MDkwfQ.e4TwyoLcgQI1gZ2wsBKCzBoOO_GsVCmeYzJXPCvsFOI"
   // Fetch client token from the backend
   useEffect(() => {
     const fetchClientToken = async () => {
@@ -61,9 +61,7 @@ export default function Payment() {
           },
           body: JSON.stringify({
             nonce,
-            amount: 20.0, //replace
-            studentId: 2,
-            courseId: 3,
+            courseId: 4,
           }),
         }
       );
