@@ -25,8 +25,8 @@ public class StudentController {
     EnrollmentService enrollmentService;
 
     @GetMapping("/courses")
-    public List<CourseResDto> getCourses() {
-        return courseService.getAllCourses();
+    public List<CourseResDto> getCourses(@AuthenticationPrincipal Student student) {
+        return courseService.getStudentOwnedCourses(student.getId());
     }
 
     @PostMapping("/course/{courseId}")

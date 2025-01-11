@@ -2,27 +2,23 @@ package com.learnx.learnx_backend.Services;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.CourseDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseResDto;
-import com.learnx.learnx_backend.Exceptions.ResourceNotFoundException;
 import com.learnx.learnx_backend.Models.Course;
 import com.learnx.learnx_backend.Models.Instructor;
 import com.learnx.learnx_backend.Repositories.CourseRepo;
-import com.learnx.learnx_backend.Repositories.InstructorRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class CourseService {
     @Autowired
     private CourseRepo courseRepo;
-
-    @Autowired
-    private InstructorRepo instructorRepo;
 
     @Autowired
     ModelMapper modelMapper;
@@ -44,28 +40,42 @@ public class CourseService {
                 .build();
     }
 
-    public List<CourseResDto> getAllCourses() {
-        List<Course> courses = courseRepo.findAll();
+    public Page<Course> getAllCourses(int page , int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Course> courses = courseRepo.findAll(pageable);
+        return courses;
 
-        return courses.stream().map(course -> {
-            return CourseResDto.builder().courseName(course.getTitle())
-                    .courseId(course.getId())
-                    .price(course.getPrice())
-                    .courseDescription(course.getDescription())
-                    .instructorName(course.getInstructor().getName()).build();
-        }).toList();
+//        return courses.stream().map(course -> {
+//            return CourseResDto.builder().courseName(course.getTitle())
+//                    .courseId(course.getId())
+//                    .price(course.getPrice())
+//                    .courseDescription(course.getDescription())
+//                    .instructorName(course.getInstructor().getName()).build();
+//        }).toList();
+    }
+
+    public List<CourseResDto> getStudentOwnedCourses(Long studentId) {
+        List<Course> courses = courseRepo.findCoursesByStudentId(studentId);
+
+        return courses.stream().map(course ->
+                CourseResDto.builder().courseName(course.getTitle())
+                        .courseId(course.getId())
+                        .price(course.getPrice())
+                        .courseDescription(course.getDescription())
+                        .instructorName(course.getInstructor().getName()).build()
+        ).toList();
     }
 
     public List<CourseResDto> getInstructorOwnedCourses(Long instructorId) {
         List<Course> courses = courseRepo.findAllByInstructorId(instructorId);
 
-        return courses.stream().map(course -> {
-            return CourseResDto.builder().courseName(course.getTitle())
-                    .courseId(course.getId())
-                    .price(course.getPrice())
-                    .courseDescription(course.getDescription())
-                    .instructorName(course.getInstructor().getName()).build();
-        }).toList();
+        return courses.stream().map(course ->
+                CourseResDto.builder().courseName(course.getTitle())
+                        .courseId(course.getId())
+                        .price(course.getPrice())
+                        .courseDescription(course.getDescription())
+                        .instructorName(course.getInstructor().getName()).build()
+        ).toList();
     }
 
     public Course getCourseById(Long courseId) {

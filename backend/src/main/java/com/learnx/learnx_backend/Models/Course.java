@@ -1,6 +1,7 @@
 package com.learnx.learnx_backend.Models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,9 +30,11 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
+    @JsonIgnore
     private Instructor instructor;
 
     @OneToMany(mappedBy = "course")
+    @JsonIgnore
     private Set<Enrollment> enrollments = new HashSet<>();
 
     @CreationTimestamp

@@ -43,12 +43,11 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers("/swagger-ui/**",
                                         "/v3/api-docs/**",
-                                        "/swagger-ui.html",
-                                        "/braintree/*"
+                                        "/swagger-ui.html"
                                 ).permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/instructor/**").hasAnyRole("INSTRUCTOR", "ADMIN")
-                                .requestMatchers("/register/*", "/login", "/verify").permitAll()
+                                .requestMatchers("/register/*", "/login", "/verify", "/api/courses").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
