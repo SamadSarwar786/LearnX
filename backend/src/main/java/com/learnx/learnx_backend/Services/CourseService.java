@@ -68,7 +68,7 @@ public class CourseService {
         }).toList();
     }
 
-    Course getCourseById(Long courseId) {
+    public Course getCourseById(Long courseId) {
         Optional<Course> course = courseRepo.findById(courseId);
         return course.orElse(null);
     }

@@ -29,6 +29,9 @@ public class Enrollment {
     @Column(nullable = false)
     private String TransactionId; // Tracks the transaction ID for the payment
 
+    // @Column(nullable = false)
+    private Integer amount; // Tracks the amount paid for the course
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
