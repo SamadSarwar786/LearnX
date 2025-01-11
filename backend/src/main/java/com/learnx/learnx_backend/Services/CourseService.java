@@ -32,11 +32,13 @@ public class CourseService {
         course.setTitle(courseDto.getTitle());
         course.setInstructor(instructor);
         course.setDescription(courseDto.getDescription());
+        course.setPrice(courseDto.getPrice());
         course = courseRepo.save(course);
 
         return CourseResDto.builder()
                 .courseId(course.getId())
                 .courseName(course.getTitle())
+                .price(course.getPrice())
                 .instructorName(instructor.getName())
                 .courseDescription(course.getDescription())
                 .build();
@@ -48,6 +50,7 @@ public class CourseService {
         return courses.stream().map(course -> {
             return CourseResDto.builder().courseName(course.getTitle())
                     .courseId(course.getId())
+                    .price(course.getPrice())
                     .courseDescription(course.getDescription())
                     .instructorName(course.getInstructor().getName()).build();
         }).toList();
@@ -59,6 +62,7 @@ public class CourseService {
         return courses.stream().map(course -> {
             return CourseResDto.builder().courseName(course.getTitle())
                     .courseId(course.getId())
+                    .price(course.getPrice())
                     .courseDescription(course.getDescription())
                     .instructorName(course.getInstructor().getName()).build();
         }).toList();

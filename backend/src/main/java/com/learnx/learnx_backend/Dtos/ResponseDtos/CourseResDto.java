@@ -10,4 +10,5 @@ public class CourseResDto {
     String courseName;
     String courseDescription;
     String instructorName;
+    Integer price;
 }

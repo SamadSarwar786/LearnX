@@ -20,11 +20,11 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @PostMapping
-    public ResponseEntity<CourseResDto> createCourse(@Valid @RequestBody CourseDto courseDto, @AuthenticationPrincipal Instructor instructor) {
-        CourseResDto createdCourse = courseService.createCourse(courseDto, instructor);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
-    }
+//    @PostMapping
+//    public ResponseEntity<CourseResDto> createCourse(@Valid @RequestBody CourseDto courseDto, @AuthenticationPrincipal Instructor instructor) {
+//        CourseResDto createdCourse = courseService.createCourse(courseDto, instructor);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
+//    }
 
     @GetMapping
     @PreAuthorize("permitAll()")

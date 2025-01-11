@@ -11,4 +11,6 @@ public class CourseDto {
     private String title;
 
     private String description;
+    @NotNull(message = "Price is required")
+    private Integer price;
 }

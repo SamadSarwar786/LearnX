@@ -32,7 +32,6 @@ public class EnrollmentService {
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
         enrollment.setCourse(course);
-        enrollment.setEnrollmentDateTime(LocalDateTime.now());
 
 //        // Set payment details if applicable
 //        Payment payment = new Payment();
