@@ -25,14 +25,14 @@ public class StudentController {
     EnrollmentService enrollmentService;
 
     @GetMapping("/courses")
-    public List<CourseResDto> getCourses() {
-        return courseService.getAllCourses();
+    public List<CourseResDto> getCourses(@AuthenticationPrincipal Student student) {
+        return courseService.getStudentOwnedCourses(student.getId());
     }
 
     @PostMapping("/course/{courseId}")
     public ResponseEntity enrollCourse(@AuthenticationPrincipal Student student, @PathVariable Long courseId) {
         try {
-            Enrollment enrollment = enrollmentService.enrollStudent(student, courseId);
+            Enrollment enrollment = enrollmentService.enrollStudent(student, courseId, "abcedfefg", 500);
             return ResponseEntity.ok().body("Enrolled successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

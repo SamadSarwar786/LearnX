@@ -2,6 +2,8 @@ package com.learnx.learnx_backend.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,18 @@ public class Enrollment {
     @JsonIgnore  // to prevent infinite recursion (circular reference) when serializing the object to JSON
     private Course course;
 
-    private LocalDateTime EnrollmentDateTime; // Tracks when the student enrolled
+    @Column(nullable = false)
+    private String TransactionId; // Tracks the transaction ID for the payment
+
+    // @Column(nullable = false)
+    private Integer amount; // Tracks the amount paid for the course
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updateAt;
 
 }

@@ -43,15 +43,15 @@ public class InstructorController {
         return "update courses";
     }
 
-    @PostMapping("/course/{courseId}/lesson")
-    public String addLesson(@PathVariable Long courseId) {
-        return "added lesson";
-    }
-
-    @PutMapping("/course/{courseId}/lesson")
-    public String updateLesson(@PathVariable Long courseId) {
-        return "update lesson";
-    }
+//    @PostMapping("/course/{courseId}/lesson")
+//    public String addLesson(@PathVariable Long courseId) {
+//        return "added lesson";
+//    }
+//
+//    @PutMapping("/course/{courseId}/lesson")
+//    public String updateLesson(@PathVariable Long courseId) {
+//        return "update lesson";
+//    }
 
     @GetMapping("/course-sales")
     public ResponseEntity<List<CourseSalesDto>> getCoursesWithSales(@AuthenticationPrincipal Instructor instructor) {
