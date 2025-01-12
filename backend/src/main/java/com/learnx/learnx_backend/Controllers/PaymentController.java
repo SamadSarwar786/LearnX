@@ -3,7 +3,7 @@ package com.learnx.learnx_backend.Controllers;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.learnx.learnx_backend.Dtos.RequestDtos.PaymentRequest;
-import com.learnx.learnx_backend.Dtos.RequestDtos.PaymentResponse;
+import com.learnx.learnx_backend.Dtos.ResponseDtos.GeneralResponse;
 import com.learnx.learnx_backend.Models.Student;
 import com.learnx.learnx_backend.Services.BraintreeService;
 import com.learnx.learnx_backend.Services.CourseService;
@@ -34,8 +34,8 @@ public class PaymentController {
     }
 
     @PostMapping("/process-payment")
-    public ResponseEntity<PaymentResponse> processPayment(@Valid @RequestBody PaymentRequest paymentRequest, @AuthenticationPrincipal Student student) {
-        PaymentResponse res = new PaymentResponse();
+    public ResponseEntity<GeneralResponse> processPayment(@Valid @RequestBody PaymentRequest paymentRequest, @AuthenticationPrincipal Student student) {
+        GeneralResponse res = new GeneralResponse();
         try {
             Integer amount = courseService.getCourseById(paymentRequest.getCourseId()).getPrice();
             Result<Transaction> result = braintreeService.processPayment(paymentRequest.getNonce(), amount);

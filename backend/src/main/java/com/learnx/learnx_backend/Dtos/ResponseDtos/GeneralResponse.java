@@ -1,9 +1,9 @@
-package com.learnx.learnx_backend.Dtos.RequestDtos;
+package com.learnx.learnx_backend.Dtos.ResponseDtos;
 
 import lombok.Data;
 
 @Data
-public class PaymentResponse {
+public class GeneralResponse {
     private String status;
     private String message;
 }
