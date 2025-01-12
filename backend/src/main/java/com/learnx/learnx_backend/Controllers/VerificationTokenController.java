@@ -3,10 +3,12 @@ package com.learnx.learnx_backend.Controllers;
 import com.learnx.learnx_backend.Services.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/public")
 public class VerificationTokenController {
 
     @Autowired

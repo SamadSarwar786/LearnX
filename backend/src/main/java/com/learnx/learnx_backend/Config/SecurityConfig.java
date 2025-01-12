@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 ).permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/instructor/**").hasAnyRole("INSTRUCTOR", "ADMIN")
-                                .requestMatchers("/register/*", "/login", "/verify", "/api/courses").permitAll()
+                                .requestMatchers("/api/public/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
