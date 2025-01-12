@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import Link from 'next/link'
+import { useLoginMutation } from '../../services/api';
+import { useDispatch } from 'react-redux'
+import { loginSuccess } from '../../store/slices/userSlice'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -14,6 +18,9 @@ const formSchema = z.object({
 })
 
 export function LoginForm() {
+  const [login, { isLoading }] = useLoginMutation()
+  const dispatch = useDispatch()
+  const router = useRouter()
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -22,9 +29,18 @@ export function LoginForm() {
     },
   })
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     console.log(values)
-    // Here you would typically send the data to your backend
+    try {
+      // const userData = await login(values).unwrap()
+      // Dispatch loginSuccess action with the user data
+      dispatch(loginSuccess(values))
+      console.log('Login successful', values)
+      router.push('/') 
+    } catch (error) {
+      console.error('Login failed', error)
+      dispatch(loginFailure(error.message))
+    }
   }
 
   return (

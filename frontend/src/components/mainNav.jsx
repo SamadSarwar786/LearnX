@@ -1,41 +1,32 @@
+'use client';
+
 import { cn } from "@/lib/utils";
-import Link from 'next/link'
+import Link from 'next/link';
+import { useRouter } from "next/navigation";
 
 export function MainNav({ className, ...props }) {
+  const router = useRouter();
   return (
     <nav
       className={cn("flex items-center space-x-4 lg:space-x-6", className)}
       {...props}
     >
+       <span className="text-lg font-bold">learnX</span>
       <Link
         href="/"
-        className="text-sm font-medium transition-colors hover:text-primary"
+        className={cn("text-sm font-medium transition-colors hover:text-primary", {
+          'text-primary': router.pathname === '/', 
+        })}
       >
         Home
       </Link>
       <Link
         href="/courses"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        className={cn("text-sm font-medium transition-colors hover:text-primary", {
+          'text-primary': router.pathname === '/courses', 
+        })}
       >
         Courses
-      </Link>
-      <Link
-        href="/career"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Career
-      </Link>
-      <Link
-        href="/blog"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Blog
-      </Link>
-      <Link
-        href="/about"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        About us
       </Link>
     </nav>
   );

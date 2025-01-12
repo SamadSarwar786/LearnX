@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CourseCard } from "./courseCard";
+import Link from "next/link";
 
 export function CourseSection({ title, courses }) {
   return (
@@ -10,7 +11,9 @@ export function CourseSection({ title, courses }) {
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {courses.map((course) => (
-          <CourseCard key={course.id} {...course} />
+          <Link href={`/cources/${course.id}`}>
+             <CourseCard key={course.id} {...course} />
+          </Link>
         ))}
       </div>
     </section>
