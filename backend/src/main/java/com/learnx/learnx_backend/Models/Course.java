@@ -22,8 +22,9 @@ public class Course {
     @Column(nullable = false)
     private String title;
 
-    @Column
+    private Boolean isPublished = false;
     private String description;
+    private String thumbnail;
 
     @Column(nullable = false)
     private Integer price;
