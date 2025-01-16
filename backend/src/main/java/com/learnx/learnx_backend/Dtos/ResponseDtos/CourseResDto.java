@@ -1,5 +1,6 @@
 package com.learnx.learnx_backend.Dtos.ResponseDtos;
 
+import com.learnx.learnx_backend.Models.Category;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,4 +12,5 @@ public class CourseResDto {
     String courseDescription;
     String instructorName;
     Integer price;
+    Category category;
 }

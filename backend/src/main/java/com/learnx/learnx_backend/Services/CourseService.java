@@ -4,6 +4,7 @@ import com.learnx.learnx_backend.Dtos.RequestDtos.CourseDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseResDto;
 import com.learnx.learnx_backend.Models.Course;
 import com.learnx.learnx_backend.Models.Instructor;
+import com.learnx.learnx_backend.Repositories.CategoryRepo;
 import com.learnx.learnx_backend.Repositories.CourseRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +22,27 @@ public class CourseService {
     private CourseRepo courseRepo;
 
     @Autowired
+    private CategoryRepo categoryRepo;
+
+    @Autowired
     ModelMapper modelMapper;
 
     public CourseResDto createCourse(CourseDto courseDto, Instructor instructor) {
-        Course course = new Course();
-        course.setTitle(courseDto.getTitle());
-        course.setInstructor(instructor);
-        course.setDescription(courseDto.getDescription());
-        course.setPrice(courseDto.getPrice());
-        course = courseRepo.save(course);
 
+        Course course =  modelMapper.map(courseDto, Course.class);
+        categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
+        course.setInstructor(instructor);
+
+        Course savedCourse = courseRepo.save(course);
+
+//
         return CourseResDto.builder()
-                .courseId(course.getId())
-                .courseName(course.getTitle())
-                .price(course.getPrice())
+                .courseId(savedCourse.getId())
+                .courseName(savedCourse.getTitle())
+                .price(savedCourse.getPrice())
                 .instructorName(instructor.getName())
-                .courseDescription(course.getDescription())
+                .courseDescription(savedCourse.getDescription())
+                .category(savedCourse.getCategory())
                 .build();
     }
 
