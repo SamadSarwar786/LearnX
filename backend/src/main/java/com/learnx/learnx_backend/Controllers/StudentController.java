@@ -1,6 +1,6 @@
 package com.learnx.learnx_backend.Controllers;
 
-import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseResDto;
+import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseLabelDto;
 import com.learnx.learnx_backend.Models.Enrollment;
 import com.learnx.learnx_backend.Models.Student;
 import com.learnx.learnx_backend.Services.CourseService;
@@ -25,7 +25,7 @@ public class StudentController {
     EnrollmentService enrollmentService;
 
     @GetMapping("/courses")
-    public List<CourseResDto> getCourses(@AuthenticationPrincipal Student student) {
+    public List<CourseLabelDto> getCourses(@AuthenticationPrincipal Student student) {
         return courseService.getStudentOwnedCourses(student.getId());
     }
 

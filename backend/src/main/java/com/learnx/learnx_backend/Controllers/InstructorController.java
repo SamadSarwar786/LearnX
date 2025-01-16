@@ -1,7 +1,7 @@
 package com.learnx.learnx_backend.Controllers;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.CourseDto;
-import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseResDto;
+import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseLabelDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseSalesDto;
 import com.learnx.learnx_backend.Models.Instructor;
 import com.learnx.learnx_backend.Services.CourseService;
@@ -28,13 +28,13 @@ public class InstructorController {
     EnrollmentService enrollmentService;
 
     @GetMapping("/courses")
-    public List<CourseResDto> getCourses(@AuthenticationPrincipal Instructor instructor) {
+    public List<CourseLabelDto> getCourses(@AuthenticationPrincipal Instructor instructor) {
         return courseService.getInstructorOwnedCourses(instructor.getId());
     }
 
     @PostMapping("/course")
-    public ResponseEntity<CourseResDto> addCourse(@Valid @RequestBody CourseDto courseDto, @AuthenticationPrincipal Instructor instructor) {
-        CourseResDto createdCourse = courseService.createCourse(courseDto, instructor);
+    public ResponseEntity<CourseLabelDto> addCourse(@Valid @RequestBody CourseDto courseDto, @AuthenticationPrincipal Instructor instructor) {
+        CourseLabelDto createdCourse = courseService.createCourse(courseDto, instructor);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 
