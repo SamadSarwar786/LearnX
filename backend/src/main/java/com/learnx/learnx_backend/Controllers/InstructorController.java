@@ -51,8 +51,8 @@ public class InstructorController {
     }
 
     @GetMapping("/course/{courseId}/thumbnail")
-    public URL getThumbnailUrl(@PathVariable Long courseId, @AuthenticationPrincipal Instructor instructor) {
-        return courseService.getThumbnailUrl(courseId, instructor);
+    public URL getThumbnailPutUrl(@PathVariable Long courseId, @AuthenticationPrincipal Instructor instructor) {
+        return courseService.getThumbnailPutUrl(courseId, instructor);
     }
     @PostMapping("/course/{courseId}/thumbnail")
     public ResponseEntity<GeneralResponse> thumbnailSaveUpdate(@PathVariable Long courseId, @AuthenticationPrincipal Instructor instructor) {

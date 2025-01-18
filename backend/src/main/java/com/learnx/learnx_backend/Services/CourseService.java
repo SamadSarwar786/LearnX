@@ -80,7 +80,7 @@ public class CourseService {
         }
     }
 
-    public URL getThumbnailUrl(Long courseId, Instructor instructor) {
+    public URL getThumbnailPutUrl(Long courseId, Instructor instructor) {
         try {
             Course course = courseRepo.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
             if (!course.getInstructor().getId().equals(instructor.getId()))

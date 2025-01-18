@@ -11,9 +11,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "lessons")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@SuperBuilder
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,18 +24,11 @@ public class Lesson {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private Long sequenceNumber;
-
-    @Column
     private String description;
+    private Boolean isPublished = false;
+    private Boolean isFree = false;
 
-    @Column(nullable = false)
     @JsonIgnore
     private String videoUrl;  //videoKey
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
 
 }
