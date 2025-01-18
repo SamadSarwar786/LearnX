@@ -8,6 +8,7 @@ import com.learnx.learnx_backend.Repositories.CategoryRepo;
 import com.learnx.learnx_backend.Repositories.CourseRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,20 +26,33 @@ public class CourseService {
     ModelMapper modelMapper;
 
     public CourseLabelDto createCourse(CourseDto courseDto, Instructor instructor) {
+        try {
+            Course course = new Course();
+            course.setTitle(courseDto.getTitle());
+            course.setDescription(courseDto.getDescription());
+            course.setPrice(courseDto.getPrice());
+            course.setIsPublished(courseDto.getIsPublished());
 
-        Course course = modelMapper.map(courseDto, Course.class);
-        categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
-        course.setInstructor(instructor);
+            categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
+            course.setInstructor(instructor);
 
-        Course savedCourse = courseRepo.save(course);
+            Course savedCourse = courseRepo.save(course);
 
-        CourseLabelDto courseLabelDto = modelMapper.map(savedCourse, CourseLabelDto.class);
-        courseLabelDto.setInstructorName(instructor.getName());
-        courseLabelDto.setInstructorId(instructor.getId());
+            CourseLabelDto courseLabelDto = modelMapper.map(savedCourse, CourseLabelDto.class);
+            courseLabelDto.setInstructorName(instructor.getName());
+            courseLabelDto.setInstructorId(instructor.getId());
 
-        return courseLabelDto;
-
+            return courseLabelDto;
+        } catch (ObjectOptimisticLockingFailureException e) {
+            // Handle optimistic locking failure gracefully
+            System.out.println("Optimistic locking conflict: " + e.getMessage());
+            throw new RuntimeException("The entity was modified or deleted by another transaction.", e);
+        } catch (Exception e) {
+            System.out.println("ERROR " + e);
+            throw new RuntimeException(e);
+        }
     }
+
 
     public List<CourseLabelDto> getAllCourses() {
         try {
