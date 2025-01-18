@@ -8,6 +8,5 @@ import lombok.Data;
 public class LessonPreSignedUrlResponseDto {
     Long lessonId;
     String title;
-    String preSignedThumbnailUrl;
     String preSignedVideoUrl;
 }

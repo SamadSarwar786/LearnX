@@ -76,7 +76,6 @@ public class LessonService {
                     .description(lessonDto.getDescription())
                     .course(course)
                     .videoUrl(url)
-                    .thumbnailUrl(url)
                     .sequenceNumber(lessonDto.getSequenceNumber())
                     .status(Status.PENDING)
                     .build();
@@ -84,9 +83,8 @@ public class LessonService {
         }
 
         URL videoPreSignedUrl = s3Service.generatePresignedUrlForPutObject(videoBucketName, savedLesson.getVideoUrl());
-        URL thumnailPreSingedUrl = s3Service.generatePresignedUrlForPutObject(thumbnailBucketName, savedLesson.getThumbnailUrl());
 
-        return new LessonPreSignedUrlResponseDto(savedLesson.getId(), savedLesson.getTitle(), thumnailPreSingedUrl.toString(), videoPreSignedUrl.toString());
+        return new LessonPreSignedUrlResponseDto(savedLesson.getId(), savedLesson.getTitle(),videoPreSignedUrl.toString());
     }
 
     public boolean handleUploadSuccessful(Long lessonId) {

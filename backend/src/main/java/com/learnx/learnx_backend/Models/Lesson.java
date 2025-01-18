@@ -31,10 +31,7 @@ public class Lesson {
     private Long sequenceNumber;
 
     @Column
-    private String description; // Using @Lob for potentially large text content
-
-    @Column(nullable = false)
-    private String thumbnailUrl;
+    private String description;
 
     @Column(nullable = false)
     @JsonIgnore
