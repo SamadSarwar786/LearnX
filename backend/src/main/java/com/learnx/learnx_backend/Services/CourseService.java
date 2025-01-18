@@ -1,6 +1,7 @@
 package com.learnx.learnx_backend.Services;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.CourseDto;
+import com.learnx.learnx_backend.Dtos.RequestDtos.CourseUpdateDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseLabelDto;
 import com.learnx.learnx_backend.Models.Course;
 import com.learnx.learnx_backend.Models.Instructor;
@@ -28,10 +29,7 @@ public class CourseService {
     public CourseLabelDto createCourse(CourseDto courseDto, Instructor instructor) {
         try {
             Course course = new Course();
-            course.setTitle(courseDto.getTitle());
-            course.setDescription(courseDto.getDescription());
-            course.setPrice(courseDto.getPrice());
-            course.setIsPublished(courseDto.getIsPublished());
+            modelMapper.map(courseDto,course);
 
             categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
             course.setInstructor(instructor);
@@ -50,6 +48,24 @@ public class CourseService {
         } catch (Exception e) {
             System.out.println("ERROR " + e);
             throw new RuntimeException(e);
+        }
+    }
+
+    public void updateCourse(Long courseId, CourseUpdateDto courseUpdateDto, Instructor instructor) {
+        try {
+            Course course = courseRepo.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+            if(!course.getInstructor().getId().equals(instructor.getId()))
+                throw new RuntimeException("You are not authorized to update this course");
+            modelMapper.map(courseUpdateDto, course);
+
+            if(courseUpdateDto.getCategoryId() != null) {
+                categoryRepo.findById(courseUpdateDto.getCategoryId()).ifPresent(course::setCategory);
+            }
+            Course savedCourse = courseRepo.save(course);
+            modelMapper.map(savedCourse, CourseLabelDto.class);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Error updating course: " + e.getMessage(), e);
         }
     }
 

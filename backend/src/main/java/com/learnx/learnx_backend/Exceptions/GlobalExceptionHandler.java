@@ -95,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setMessage("An unexpected error occurred. Please try again later.");
+        errorResponse.setMessage(ex.getMessage());
         errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorResponse.setTimestamp(System.currentTimeMillis());
         ex.printStackTrace(); // For debugging; remove in production

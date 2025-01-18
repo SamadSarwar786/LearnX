@@ -1,8 +1,10 @@
 package com.learnx.learnx_backend.Controllers;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.CourseDto;
+import com.learnx.learnx_backend.Dtos.RequestDtos.CourseUpdateDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseLabelDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.CourseSalesDto;
+import com.learnx.learnx_backend.Dtos.ResponseDtos.GeneralResponse;
 import com.learnx.learnx_backend.Models.Instructor;
 import com.learnx.learnx_backend.Services.CourseService;
 import com.learnx.learnx_backend.Services.EnrollmentService;
@@ -34,13 +36,17 @@ public class InstructorController {
 
     @PostMapping("/course")
     public ResponseEntity<CourseLabelDto> addCourse(@Valid @RequestBody CourseDto courseDto, @AuthenticationPrincipal Instructor instructor) {
-        CourseLabelDto createdCourse = courseService.createCourse(courseDto, instructor);
+        CourseLabelDto createdCourse =  courseService.createCourse(courseDto, instructor);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 
-    @PutMapping("/course")
-    public String updateCourse() {
-        return "update courses";
+    @PutMapping("/course/{courseId}")
+    public ResponseEntity<GeneralResponse> updateCourse(@PathVariable Long courseId, @Valid @RequestBody CourseUpdateDto courseUpdateDto, @AuthenticationPrincipal Instructor instructor) {
+        courseService.updateCourse(courseId, courseUpdateDto, instructor);
+        GeneralResponse response = new GeneralResponse();
+        response.setStatus("success");
+        response.setMessage("Course updated successfully");
+        return ResponseEntity.ok(response);
     }
 
 //    @PostMapping("/course/{courseId}/lesson")
