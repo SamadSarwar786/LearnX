@@ -11,7 +11,7 @@ public class CourseLabelDto {
     String title;
     String description;
     Boolean isPublished;
-    String thumbnail;
+    String thumbnailUrl;
     Integer price;
     String instructorName;
     Long instructorId;

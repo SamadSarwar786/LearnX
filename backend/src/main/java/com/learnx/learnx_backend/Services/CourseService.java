@@ -9,9 +9,11 @@ import com.learnx.learnx_backend.Repositories.CategoryRepo;
 import com.learnx.learnx_backend.Repositories.CourseRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +26,21 @@ public class CourseService {
     private CategoryRepo categoryRepo;
 
     @Autowired
-    ModelMapper modelMapper;
+    private S3Service s3Service;
+
+    @Value("${aws.s3.thumbnail-bucket}")
+    private String bucketName;
+
+    @Value("${image.website.url}")
+    private String imageWebsiteUrl;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public CourseLabelDto createCourse(CourseDto courseDto, Instructor instructor) {
         try {
             Course course = new Course();
-            modelMapper.map(courseDto,course);
+            modelMapper.map(courseDto, course);
 
             categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
             course.setInstructor(instructor);
@@ -51,24 +62,52 @@ public class CourseService {
         }
     }
 
+
     public void updateCourse(Long courseId, CourseUpdateDto courseUpdateDto, Instructor instructor) {
         try {
             Course course = courseRepo.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
-            if(!course.getInstructor().getId().equals(instructor.getId()))
+            if (!course.getInstructor().getId().equals(instructor.getId()))
                 throw new RuntimeException("You are not authorized to update this course");
             modelMapper.map(courseUpdateDto, course);
 
-            if(courseUpdateDto.getCategoryId() != null) {
+            if (courseUpdateDto.getCategoryId() != null) {
                 categoryRepo.findById(courseUpdateDto.getCategoryId()).ifPresent(course::setCategory);
             }
             Course savedCourse = courseRepo.save(course);
             modelMapper.map(savedCourse, CourseLabelDto.class);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error updating course: " + e.getMessage(), e);
         }
     }
 
+    public URL getThumbnailUrl(Long courseId, Instructor instructor) {
+        try {
+            Course course = courseRepo.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+            if (!course.getInstructor().getId().equals(instructor.getId()))
+                throw new RuntimeException("You are not authorized to update this course");
+
+            String key = getThumbnailUrlKey(courseId,instructor.getId());
+
+            return s3Service.generatePresignedUrlForPutObject(bucketName, key);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting thumbnail URL: " + e.getMessage(), e);
+        }
+    }
+
+    public void thumbnailSaveUpdate(Long courseId, Instructor instructor) {
+        try {
+            String key = getThumbnailUrlKey(courseId,instructor.getId());
+            Course course = courseRepo.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+            if (!course.getInstructor().getId().equals(instructor.getId()))
+                throw new RuntimeException("You are not authorized to update this course");
+            course.setThumbnailUrl(imageWebsiteUrl+key);
+            courseRepo.save(course);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Error saving thumbnail URL: " + e.getMessage(), e);
+        }
+    }
 
     public List<CourseLabelDto> getAllCourses() {
         try {
@@ -104,7 +143,7 @@ public class CourseService {
         try {
             List<Course> courses = courseRepo.findAllByInstructorId(instructorId);
             return courses.stream().map(course -> {
-                 return modelMapper.map(course, CourseLabelDto.class);
+                return modelMapper.map(course, CourseLabelDto.class);
             }).toList();
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong");
@@ -114,6 +153,9 @@ public class CourseService {
     public Course getCourseById(Long courseId) {
         Optional<Course> course = courseRepo.findById(courseId);
         return course.orElse(null);
+    }
+    public String getThumbnailUrlKey(Long courseId, Long instructorId){
+        return "upload/instructor_" + instructorId + "/course_" + courseId + "_thumbnail.jpg";
     }
 }
 

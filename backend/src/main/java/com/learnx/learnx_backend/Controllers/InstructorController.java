@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URL;
 import java.util.List;
 
 @RestController
@@ -46,6 +47,19 @@ public class InstructorController {
         GeneralResponse response = new GeneralResponse();
         response.setStatus("success");
         response.setMessage("Course updated successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/course/{courseId}/thumbnail")
+    public URL getThumbnailUrl(@PathVariable Long courseId, @AuthenticationPrincipal Instructor instructor) {
+        return courseService.getThumbnailUrl(courseId, instructor);
+    }
+    @PostMapping("/course/{courseId}/thumbnail")
+    public ResponseEntity<GeneralResponse> thumbnailSaveUpdate(@PathVariable Long courseId, @AuthenticationPrincipal Instructor instructor) {
+        courseService.thumbnailSaveUpdate(courseId, instructor);
+        GeneralResponse response = new GeneralResponse();
+        response.setStatus("success");
+        response.setMessage("thumbnail updated successfully");
         return ResponseEntity.ok(response);
     }
 

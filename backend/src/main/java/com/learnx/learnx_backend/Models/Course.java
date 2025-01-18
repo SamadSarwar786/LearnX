@@ -24,7 +24,7 @@ public class Course {
 
     private Boolean isPublished = false;
     private String description;
-    private String thumbnail;
+    private String thumbnailUrl;
 
     @Column(nullable = false)
     private Integer price;
