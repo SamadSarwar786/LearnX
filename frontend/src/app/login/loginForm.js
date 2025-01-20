@@ -1,45 +1,68 @@
-'use client'
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import Link from 'next/link'
-import { useLoginMutation } from '../../services/api';
-import { useDispatch } from 'react-redux'
-import { loginSuccess } from '../../store/slices/userSlice'
-import { useRouter } from 'next/navigation'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { useLoginMutation } from "../../services/api";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess, validateUser } from "../../store/slices/userSlice";
+import { useRouter } from "next/navigation";
+import { setAuthToken } from "@/lib/authentication";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-})
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters." }),
+});
 
 export function LoginForm() {
-  const [login, { isLoading }] = useLoginMutation()
-  const dispatch = useDispatch()
-  const router = useRouter()
+  const isAuthenticated =
+    useSelector((state) => state.user.isAuthenticated) || false;
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "arif@gmail.com",
+      password: "password123",
     },
-  })
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
   async function onSubmit(values) {
-    console.log(values)
+    console.log(values);
     try {
-      // const userData = await login(values).unwrap()
+      const response = await login(values).unwrap();
       // Dispatch loginSuccess action with the user data
-      dispatch(loginSuccess(values))
-      console.log('Login successful', values)
-      router.push('/') 
+      if (response.token) {
+        setAuthToken(response.token);
+        dispatch(loginSuccess());
+        dispatch(validateUser());
+        console.log("Login successful", response);
+        router.push("/");
+      }
     } catch (error) {
-      console.error('Login failed', error)
-      dispatch(loginFailure(error.message))
+      console.error("Login failed", error);
+      dispatch(loginFailure(error.message));
     }
   }
 
@@ -72,14 +95,18 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">Login</Button>
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
       </form>
       <div className="mt-4 text-center">
-        <Link href="/register" className="text-sm text-blue-600 hover:underline">
+        <Link
+          href="/register"
+          className="text-sm text-blue-600 hover:underline"
+        >
           Don't have an account? Register here
         </Link>
       </div>
     </Form>
-  )
+  );
 }
-
