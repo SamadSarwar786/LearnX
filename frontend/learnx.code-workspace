@@ -1,0 +1,65 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.autoSave": "off",
+    "editor.fontSize": 13,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "javascript.format.enable": true,
+    "css.format.enable": true,
+    "scss.format.enable": true,
+    "html.format.enable": true,
+    "json.format.enable": true,
+    "typescript.format.enable": true,
+    "prettier.tabWidth": 4,
+    "prettier.arrowParens": "always",
+    "prettier.bracketSameLine": true,
+    "prettier.bracketSpacing": false,
+    "prettier.htmlWhitespaceSensitivity": "ignore",
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 120,
+    "prettier.useTabs": true,
+    "prettier.jsxSingleQuote": false,
+    "prettier.semi": true,
+    "prettier.enable": true,
+    "prettier.endOfLine": "lf",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.fontFamily": "monospace",
+    "debug.console.fontSize": 11,
+    "editor.tabSize": 4,
+    "javascript.validate.enable": false,
+    "typescript.validate.enable": true,
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.colorCustomizations": {
+      "activityBar.activeBackground": "#2E8B57", // Sea green
+      "activityBar.background": "#3CB371", // Medium sea green
+      "activityBar.foreground": "#FFFFFF", // White for contrast
+      "activityBar.inactiveForeground": "#FFFFFF99", // White with transparency
+      "activityBarBadge.background": "#228B22", // Forest green for badges
+      "activityBarBadge.foreground": "#FFFFFF", // White for contrast
+      "commandCenter.border": "#32CD32", // Lime green
+      "sash.hoverBorder": "#66CDAA", // Medium aquamarine
+      "statusBar.background": "#006400", // Dark green
+      "statusBar.foreground": "#FFFFFF", // White for contrast
+      "statusBarItem.hoverBackground": "#228B22", // Forest green
+      "statusBarItem.remoteBackground": "#006400", // Dark green
+      "statusBarItem.remoteForeground": "#FFFFFF", // White for contrast
+      "titleBar.activeBackground": "#2E8B57", // Sea green
+      "titleBar.activeForeground": "#FFFFFF", // White
+      "titleBar.inactiveBackground": "#2E8B5799", // Sea green with transparency
+      "titleBar.inactiveForeground": "#FFFFFF99" // White with transparency
+    },
+    "peacock.color": "#992821",
+    "cSpell.words": ["abhicash"]
+  }
+}
