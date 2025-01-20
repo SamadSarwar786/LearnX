@@ -16,7 +16,10 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e" alt="User" />
+            <AvatarImage
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+              alt="User"
+            />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
         </Button>
@@ -32,9 +35,9 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>My courses</DropdownMenuItem>
+          <Link href="/dashboard">
+            <DropdownMenuItem>My courses</DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Log out</DropdownMenuItem>

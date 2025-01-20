@@ -36,7 +36,7 @@ export function LoginForm() {
       // Dispatch loginSuccess action with the user data
       dispatch(loginSuccess(values))
       console.log('Login successful', values)
-      router.push('/') 
+      router.push('/dashboard') 
     } catch (error) {
       console.error('Login failed', error)
       dispatch(loginFailure(error.message))

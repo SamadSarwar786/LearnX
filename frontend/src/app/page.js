@@ -1,10 +1,11 @@
-import { WelcomeSection } from "@/components/WelcomeSection";
 import { CategorySection } from "@/components/categorySection";
 import { CourseSection } from "@/components/courseSection";
 import { NewsletterSection } from "@/components/newsletterSection";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { recommendedCourses, choiceCourses, developmentCourses, viewingCourses } from "./dummy";
+import { choiceCourses } from "./dummy";
+import Hero from '@/components/Hero';
+import FAQSection from '@/components/FaqSection';
 
 function Home() {
   return (
@@ -13,25 +14,14 @@ function Home() {
        <Header />
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <WelcomeSection />
+        <Hero />
         <CategorySection />
-        <CourseSection 
-          title="Recommended for you" 
-          courses={recommendedCourses} 
-        />
-        <CourseSection 
-          title="Get choice of your course" 
-          courses={choiceCourses}
-        />
+          <CourseSection 
+            title="Get choice of your course" 
+            courses={choiceCourses}
+          />
         <NewsletterSection />
-        <CourseSection 
-          title="The course in personal development" 
-          courses={developmentCourses}
-        />
-        <CourseSection 
-          title="Student are viewing" 
-          courses={viewingCourses}
-        />
+        <FAQSection />
       </main>
       { /* Footer */}
       <Footer/>
