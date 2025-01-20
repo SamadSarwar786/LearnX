@@ -12,7 +12,6 @@ public class CourseDto {
 
     private String description;
     private Boolean isPublished;
-    @NotNull(message = "Price is required")
     private Integer price;
 
     private Long categoryId;

@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (Exception e){
-            throw new BadCredentialsException("jwt expired",e);
+            throw new BadCredentialsException("jwt expired "+e.getMessage(),e);
         }
     }
 }

@@ -41,8 +41,8 @@ public class CourseService {
         try {
             Course course = new Course();
             modelMapper.map(courseDto, course);
-
-            categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
+            if (courseDto.getCategoryId() != null)
+                categoryRepo.findById(courseDto.getCategoryId()).ifPresent(course::setCategory);
             course.setInstructor(instructor);
 
             Course savedCourse = courseRepo.save(course);
@@ -86,7 +86,7 @@ public class CourseService {
             if (!course.getInstructor().getId().equals(instructor.getId()))
                 throw new RuntimeException("You are not authorized to update this course");
 
-            String key = getThumbnailUrlKey(courseId,instructor.getId());
+            String key = getThumbnailUrlKey(courseId, instructor.getId());
 
             return s3Service.generatePresignedUrlForPutObject(bucketName, key);
 
@@ -97,14 +97,13 @@ public class CourseService {
 
     public void thumbnailSaveUpdate(Long courseId, Instructor instructor) {
         try {
-            String key = getThumbnailUrlKey(courseId,instructor.getId());
+            String key = getThumbnailUrlKey(courseId, instructor.getId());
             Course course = courseRepo.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
             if (!course.getInstructor().getId().equals(instructor.getId()))
                 throw new RuntimeException("You are not authorized to update this course");
-            course.setThumbnailUrl(imageWebsiteUrl+key);
+            course.setThumbnailUrl(imageWebsiteUrl + key);
             courseRepo.save(course);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error saving thumbnail URL: " + e.getMessage(), e);
         }
     }
@@ -154,7 +153,8 @@ public class CourseService {
         Optional<Course> course = courseRepo.findById(courseId);
         return course.orElse(null);
     }
-    public String getThumbnailUrlKey(Long courseId, Long instructorId){
+
+    public String getThumbnailUrlKey(Long courseId, Long instructorId) {
         return "upload/instructor_" + instructorId + "/course_" + courseId + "_thumbnail.jpg";
     }
 }
