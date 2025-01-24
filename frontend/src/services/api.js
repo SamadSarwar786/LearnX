@@ -23,8 +23,8 @@ export const api = createApi({
       }),
     }),
     register: builder.mutation({
-      query: (userData) => ({
-        url: "register",
+      query: ({ userData, userType }) => ({
+        url: `api/public/register/${userType}`,
         method: "POST",
         body: userData,
       }),

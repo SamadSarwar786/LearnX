@@ -4,7 +4,7 @@ import { ArrowRight, BookOpen, Clock, Trophy } from "lucide-react";
 import Link from "next/link";
 import { WelcomeSection } from "@/components/WelcomeSection";
 
-export default function DashboardPage() {
+function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
@@ -59,3 +59,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+export default DashboardPage;
