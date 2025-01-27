@@ -19,7 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, validateUser } from "../../store/slices/userSlice";
 import { useRouter } from "next/navigation";
 import { setAuthToken } from "@/lib/authentication";
-import { useEffect } from "react";
 import { useToast } from "@/components/hooks/use-toast";
 import { loginFailure } from "../../store/slices/userSlice";
 
@@ -40,16 +39,10 @@ export function LoginForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "arif@gmail.com",
+      password: "password123",
     },
   });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/");
-    }
-  }, [isAuthenticated, router]);
 
   async function onSubmit(values) {
     console.log(values);
@@ -69,7 +62,7 @@ export function LoginForm() {
           description: response.message || "Successfully logged in!",
         });
 
-        router.push("/dashboard");
+        router.push("/dashboard/instructor");
       }
     } catch (error) {
       console.error("Login failed", error);

@@ -11,11 +11,6 @@ const studentNav = [
     href: "/dashboard",
     icon: BookOpen
   },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings
-  }
 ];
 
 const instructorNav = [

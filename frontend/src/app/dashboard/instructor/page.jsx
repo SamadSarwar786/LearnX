@@ -1,13 +1,71 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, BookOpen, Upload, Users } from "lucide-react";
-import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { useCreateCourseMutation } from "@/services/api";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/hooks/use-toast";
 
 export default function InstructorDashboard() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [createCourse, { isLoading }] = useCreateCourseMutation();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleCreateCourse = async () => {
+    try {
+      const response = await createCourse({ title, description }).unwrap();
+
+      if (response) {
+        setIsOpen(false);
+        setTitle("");
+        setDescription("");
+
+        toast({
+          variant: "success",
+          title: "Login Successful",
+          description: response.message || "Successfully logged in!",
+        });
+
+        router.push("/dashboard/instructor/content");
+      }
+    } catch (error) {
+      console.error("Failed to create course:", error);
+      toast({
+        // Add failure toast
+        variant: "error",
+        title: "Error",
+        description: "Failed to create course. Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Instructor Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Instructor Dashboard
+        </h2>
         <p className="text-muted-foreground">Manage your courses and content</p>
       </div>
 
@@ -24,7 +82,9 @@ export default function InstructorDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Students
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -34,7 +94,9 @@ export default function InstructorDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Course Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Course Revenue
+            </CardTitle>
             <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -49,7 +111,9 @@ export default function InstructorDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">48h</div>
-            <p className="text-xs text-muted-foreground">Total uploaded content</p>
+            <p className="text-xs text-muted-foreground">
+              Total uploaded content
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -57,34 +121,51 @@ export default function InstructorDashboard() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Courses</CardTitle>
-            <CardDescription>Your latest published courses</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[1, 2, 3].map((course) => (
-              <div key={course} className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                <div>
-                  <h4 className="font-semibold">Course Title {course}</h4>
-                  <p className="text-sm text-muted-foreground">238 enrolled • 4.8 rating</p>
-                </div>
-                <Button variant="outline">Manage</Button>
-              </div>
-            ))}
-            <Button className="w-full" variant="outline">
-              View All Courses
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Common instructor tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button className="w-full" size="lg">
-              Create New Course
-            </Button>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full" size="lg">
+                  Create New Course
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Course</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Course Title</Label>
+                    <Input
+                      id="title"
+                      placeholder="Enter course title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Course Description</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Enter course description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+                  <Button
+                    className="w-full"
+                    onClick={handleCreateCourse}
+                    loading={isLoading}
+                    disabled={!title.trim() || !description.trim() || isLoading}
+                  >
+                    Create Course
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button className="w-full" variant="outline" size="lg">
               Upload Course Content
             </Button>
@@ -93,6 +174,32 @@ export default function InstructorDashboard() {
             </Button>
             <Button className="w-full" variant="outline" size="lg">
               Manage Students
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Courses</CardTitle>
+            <CardDescription>Your latest published courses</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[1, 2, 3].map((course) => (
+              <div
+                key={course}
+                className="flex items-center justify-between p-4 bg-muted rounded-lg"
+              >
+                <div>
+                  <h4 className="font-semibold">Course Title {course}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    238 enrolled • 4.8 rating
+                  </p>
+                </div>
+                <Button variant="outline">Manage</Button>
+              </div>
+            ))}
+            <Button className="w-full" variant="outline">
+              View All Courses
             </Button>
           </CardContent>
         </Card>

@@ -9,7 +9,7 @@ export function middleware(request) {
                         path === '/register' || 
                         path === '/';
 
-    const token = request.cookies.get('token')?.value || '';
+    const token = request.cookies.get('__learnx_auth_state')?.value || '';
 
     // Redirect logic for public paths
     if(isPublicPath && token) {
@@ -29,6 +29,7 @@ export const config = {
         '/signup',
         '/dashboard',
         '/',
-        '/dashboard/:path*'
+        '/dashboard/instructor',
+        '/dashboard/instructor/content'
     ]
 }

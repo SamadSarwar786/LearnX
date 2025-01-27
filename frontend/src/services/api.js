@@ -36,13 +36,25 @@ export const api = createApi({
         body: payload,
       }),
     }),
-    // Add other API endpoints as needed
+    getCategories: builder.query({
+      query: () => "api/public/category",
+    }),
+    createCategory: builder.mutation({
+      query: (categoryName) => ({
+        url: "api/public/category/create",
+        method: "POST",
+        body: { name: categoryName },
+      }),
+      // Invalidate the categories query after creating a new category
+      invalidates: ['getCategories'],
+    }),    
   }),
 });
 
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useGetCurrentUserQuery,
   useCreateCourseMutation,
+  useGetCategoriesQuery,
+  useCreateCategoryMutation
 } = api;
