@@ -47,7 +47,19 @@ export const api = createApi({
       }),
       // Invalidate the categories query after creating a new category
       invalidates: ['getCategories'],
-    }),    
+    }),
+    getThumbnailUrl: builder.query({
+      query: ({courseId}) => ({
+        url: `api/instructor/course/${courseId}/thumbnail`,
+        method: 'GET',
+      }),
+    }),
+    uploadThumbnailImg: builder.mutation({
+      query: ({courseId, thumbnailUrl}) => ({
+        url: `api/instructor/course/${courseId}/thumbnail`,
+        method: "POST",
+      })
+    })
   }),
 });
 
@@ -56,5 +68,7 @@ export const {
   useRegisterMutation,
   useCreateCourseMutation,
   useGetCategoriesQuery,
-  useCreateCategoryMutation
+  useCreateCategoryMutation,
+  useGetThumbnailUrlQuery,
+  useUploadThumbnailImgMutation
 } = api;

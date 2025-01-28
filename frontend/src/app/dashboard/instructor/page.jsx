@@ -43,11 +43,17 @@ export default function InstructorDashboard() {
 
         toast({
           variant: "success",
-          title: "Login Successful",
-          description: response.message || "Successfully logged in!",
+          title: "Course Created!",
+          description: response.message || "Course Successfully created! Please add your content",
         });
 
-        router.push("/dashboard/instructor/content");
+        // add title and description in the param
+        const encodedTitle = encodeURIComponent(title);
+        const encodedDescription = encodeURIComponent(description);
+
+        router.push(
+          `/dashboard/instructor/content/${response.id}?title=${encodedTitle}&description=${encodedDescription}`
+        );
       }
     } catch (error) {
       console.error("Failed to create course:", error);

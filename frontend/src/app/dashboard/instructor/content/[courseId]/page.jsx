@@ -21,15 +21,84 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload, Video, File, Image as ImageIcon } from "lucide-react";
-import { useGetCategoriesQuery } from "@/services/api";
-import { AddCategoryModal } from "@/components/AddCategoryModal";
-import { Plus } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
+import {
+  useGetCategoriesQuery,
+  useGetThumbnailUrlQuery,
+  useUploadThumbnailImgMutation,
+} from "@/services/api";
+import { useToast } from "@/components/hooks/use-toast";
 
 export default function ContentUpload() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const courseId = params.courseId;
+  const { toast } = useToast();
+  const { data: thumbnailUrl } = useGetThumbnailUrlQuery({ courseId });
+  const [uploadThumbnailImg] = useUploadThumbnailImgMutation();
 
+  const [selectedFile, setSelectedFile] = useState(null);
   const { data: categories, isLoading, error } = useGetCategoriesQuery();
+
+  // get the title and subtitles for the created course from query param
+  const title = decodeURIComponent(
+    searchParams.get("title") || "Untitled Course"
+  );
+  const description = decodeURIComponent(
+    searchParams.get("description") || "No description available"
+  );
+
+  useEffect(() => {
+    console.log("Course ID:", courseId);
+  }, [courseId]);
+
+  const handleUploadThumbnail = async () => {
+    if (!selectedFile) return;
+
+    try {
+      // Check if we have the pre-signed URL
+      if (!thumbnailUrl) {
+        throw new Error("Failed to get upload URL");
+      }
+
+      // Upload to the pre-signed URL
+      const response = await fetch(thumbnailUrl, {
+        method: "PUT",
+        body: selectedFile,
+        headers: {
+          "Content-Type": selectedFile.type,
+          "Access-Control-Allow-Origin": "*",
+        },
+        mode: "cors", // Add this
+      });
+
+      console.log("response", response);
+
+      if (!response.ok) {
+        throw new Error("Failed to upload to pre-signed URL");
+      }
+
+      // Update the course with the thumbnail URL using the mutation
+      await uploadThumbnailImg({
+        courseId,
+      }).unwrap();
+
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "Thumbnail uploaded successfully!",
+      });
+
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        variant: "error",
+        title: "Error",
+        description: "Failed to upload thumbnail. Please try again.",
+      });
+    }
+  };
 
   const handleFileSelect = (event) => {
     const file = event.target.files?.[0];
@@ -65,19 +134,24 @@ export default function ContentUpload() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">Content Title</Label>
-                  <Input id="title" placeholder="Enter content title" />
+                  <Input
+                    id="title"
+                    value={title}
+                    placeholder="Enter content title"
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
+                    value={description}
                     placeholder="Describe what this content is about"
                     className="min-h-[100px]"
                   />
                 </div>
 
-                {/* <div className="space-y-2">
+                <div className="space-y-2">
                   <Label htmlFor="course">Select Course</Label>
                   <Select>
                     <SelectTrigger>
@@ -99,82 +173,10 @@ export default function ContentUpload() {
                       )}
                     </SelectContent>
                   </Select>
-                </div> */}
-
-                <div className="space-y-2">
-                  <Label htmlFor="course">Select Course</Label>
-                  <div className="flex gap-2">
-                    <Select className="flex-1">
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={
-                            isLoading ? "Loading..." : "Select a category"
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {isLoading ? (
-                          <SelectItem value="loading">Loading...</SelectItem>
-                        ) : (
-                          categories?.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setIsModalOpen(true)}
-                      type="button"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  <AddCategoryModal
-                    open={isModalOpen}
-                    onOpenChange={setIsModalOpen}
-                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Content Type</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card className="cursor-pointer hover:border-primary">
-                      <CardContent className="pt-6 text-center">
-                        <Video className="mx-auto h-8 w-8 mb-2" />
-                        <div className="font-medium">Video</div>
-                        <p className="text-xs text-muted-foreground">
-                          Upload video lectures
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="cursor-pointer hover:border-primary">
-                      <CardContent className="pt-6 text-center">
-                        <File className="mx-auto h-8 w-8 mb-2" />
-                        <div className="font-medium">Document</div>
-                        <p className="text-xs text-muted-foreground">
-                          PDF, DOC files
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="cursor-pointer hover:border-primary">
-                      <CardContent className="pt-6 text-center">
-                        <ImageIcon className="mx-auto h-8 w-8 mb-2" />
-                        <div className="font-medium">Image</div>
-                        <p className="text-xs text-muted-foreground">
-                          Diagrams, charts
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Upload File</Label>
+                  <Label>Upload Thumbnail</Label>
                   <div className="border-2 border-dashed rounded-lg p-8 text-center space-y-4">
                     <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
                     <div>
@@ -188,6 +190,7 @@ export default function ContentUpload() {
                           type="file"
                           className="sr-only"
                           onChange={handleFileSelect}
+                          accept="image/*"
                         />
                       </Label>
                       <p className="text-sm text-muted-foreground">
@@ -202,9 +205,17 @@ export default function ContentUpload() {
                   </div>
                 </div>
 
-                <Button className="w-full">
-                  <Upload className="mr-2 h-4 w-4" /> Upload Content
+                <Button
+                  className="w-full"
+                  onClick={handleUploadThumbnail}
+                  // disabled={!selectedFile || thumbnailUrlLoading} // Add disabled state
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  upload
+                  {/* {thumbnailUrlLoading ? "Uploading..." : "Upload Thumbnail"} */}
                 </Button>
+
+                <Button className="w-full">Update course content</Button>
               </div>
             </CardContent>
           </Card>
