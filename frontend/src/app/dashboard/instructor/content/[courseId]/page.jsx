@@ -1,17 +1,104 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Upload, Video, File, Image as ImageIcon } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
+import {
+  useGetCategoriesQuery,
+  useGetThumbnailUrlQuery,
+  useUploadThumbnailImgMutation,
+} from "@/services/api";
+import { useToast } from "@/components/hooks/use-toast";
 
 export default function ContentUpload() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const courseId = params.courseId;
+  const { toast } = useToast();
+  const { data: thumbnailUrl } = useGetThumbnailUrlQuery({ courseId });
+  const [uploadThumbnailImg] = useUploadThumbnailImgMutation();
+
   const [selectedFile, setSelectedFile] = useState(null);
+  const { data: categories, isLoading, error } = useGetCategoriesQuery();
+
+  // get the title and subtitles for the created course from query param
+  const title = decodeURIComponent(
+    searchParams.get("title") || "Untitled Course"
+  );
+  const description = decodeURIComponent(
+    searchParams.get("description") || "No description available"
+  );
+
+  useEffect(() => {
+    console.log("Course ID:", courseId);
+  }, [courseId]);
+
+  const handleUploadThumbnail = async () => {
+    if (!selectedFile) return;
+
+    try {
+      // Check if we have the pre-signed URL
+      if (!thumbnailUrl) {
+        throw new Error("Failed to get upload URL");
+      }
+
+      // Upload to the pre-signed URL
+      const response = await fetch(thumbnailUrl, {
+        method: "PUT",
+        body: selectedFile,
+        headers: {
+          "Content-Type": selectedFile.type,
+          "Access-Control-Allow-Origin": "*",
+        },
+        mode: "cors", // Add this
+      });
+
+      console.log("response", response);
+
+      if (!response.ok) {
+        throw new Error("Failed to upload to pre-signed URL");
+      }
+
+      // Update the course with the thumbnail URL using the mutation
+      await uploadThumbnailImg({
+        courseId,
+      }).unwrap();
+
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "Thumbnail uploaded successfully!",
+      });
+
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        variant: "error",
+        title: "Error",
+        description: "Failed to upload thumbnail. Please try again.",
+      });
+    }
+  };
 
   const handleFileSelect = (event) => {
     const file = event.target.files?.[0];
@@ -24,7 +111,9 @@ export default function ContentUpload() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Course Content</h2>
-        <p className="text-muted-foreground">Upload and manage your course materials</p>
+        <p className="text-muted-foreground">
+          Upload and manage your course materials
+        </p>
       </div>
 
       <Tabs defaultValue="upload" className="space-y-4">
@@ -37,19 +126,26 @@ export default function ContentUpload() {
           <Card>
             <CardHeader>
               <CardTitle>Upload New Content</CardTitle>
-              <CardDescription>Add videos, documents, or other course materials</CardDescription>
+              <CardDescription>
+                Add videos, documents, or other course materials
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">Content Title</Label>
-                  <Input id="title" placeholder="Enter content title" />
+                  <Input
+                    id="title"
+                    value={title}
+                    placeholder="Enter content title"
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
+                    value={description}
                     placeholder="Describe what this content is about"
                     className="min-h-[100px]"
                   />
@@ -59,45 +155,28 @@ export default function ContentUpload() {
                   <Label htmlFor="course">Select Course</Label>
                   <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a course" />
+                      <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="course1">Course 1</SelectItem>
-                      <SelectItem value="course2">Course 2</SelectItem>
-                      <SelectItem value="course3">Course 3</SelectItem>
+                      {isLoading ? (
+                        <SelectItem value="loading">Loading...</SelectItem>
+                      ) : error ? (
+                        <SelectItem value="error">
+                          Error loading categories
+                        </SelectItem>
+                      ) : (
+                        categories?.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Content Type</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card className="cursor-pointer hover:border-primary">
-                      <CardContent className="pt-6 text-center">
-                        <Video className="mx-auto h-8 w-8 mb-2" />
-                        <div className="font-medium">Video</div>
-                        <p className="text-xs text-muted-foreground">Upload video lectures</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="cursor-pointer hover:border-primary">
-                      <CardContent className="pt-6 text-center">
-                        <File className="mx-auto h-8 w-8 mb-2" />
-                        <div className="font-medium">Document</div>
-                        <p className="text-xs text-muted-foreground">PDF, DOC files</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="cursor-pointer hover:border-primary">
-                      <CardContent className="pt-6 text-center">
-                        <ImageIcon className="mx-auto h-8 w-8 mb-2" />
-                        <div className="font-medium">Image</div>
-                        <p className="text-xs text-muted-foreground">Diagrams, charts</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Upload File</Label>
+                  <Label>Upload Thumbnail</Label>
                   <div className="border-2 border-dashed rounded-lg p-8 text-center space-y-4">
                     <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
                     <div>
@@ -111,9 +190,12 @@ export default function ContentUpload() {
                           type="file"
                           className="sr-only"
                           onChange={handleFileSelect}
+                          accept="image/*"
                         />
                       </Label>
-                      <p className="text-sm text-muted-foreground">or drag and drop</p>
+                      <p className="text-sm text-muted-foreground">
+                        or drag and drop
+                      </p>
                     </div>
                     {selectedFile && (
                       <div className="text-sm text-muted-foreground">
@@ -123,9 +205,17 @@ export default function ContentUpload() {
                   </div>
                 </div>
 
-                <Button className="w-full">
-                  <Upload className="mr-2 h-4 w-4" /> Upload Content
+                <Button
+                  className="w-full"
+                  onClick={handleUploadThumbnail}
+                  // disabled={!selectedFile || thumbnailUrlLoading} // Add disabled state
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  upload
+                  {/* {thumbnailUrlLoading ? "Uploading..." : "Upload Thumbnail"} */}
                 </Button>
+
+                <Button className="w-full">Update course content</Button>
               </div>
             </CardContent>
           </Card>
@@ -135,7 +225,9 @@ export default function ContentUpload() {
           <Card>
             <CardHeader>
               <CardTitle>Content Library</CardTitle>
-              <CardDescription>Manage your uploaded course content</CardDescription>
+              <CardDescription>
+                Manage your uploaded course content
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

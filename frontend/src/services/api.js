@@ -23,8 +23,8 @@ export const api = createApi({
       }),
     }),
     register: builder.mutation({
-      query: (userData) => ({
-        url: "register",
+      query: ({ userData, userType }) => ({
+        url: `api/public/register/${userType}`,
         method: "POST",
         body: userData,
       }),
@@ -36,13 +36,39 @@ export const api = createApi({
         body: payload,
       }),
     }),
-    // Add other API endpoints as needed
+    getCategories: builder.query({
+      query: () => "api/public/category",
+    }),
+    createCategory: builder.mutation({
+      query: (categoryName) => ({
+        url: "api/public/category/create",
+        method: "POST",
+        body: { name: categoryName },
+      }),
+      // Invalidate the categories query after creating a new category
+      invalidates: ['getCategories'],
+    }),
+    getThumbnailUrl: builder.query({
+      query: ({courseId}) => ({
+        url: `api/instructor/course/${courseId}/thumbnail`,
+        method: 'GET',
+      }),
+    }),
+    uploadThumbnailImg: builder.mutation({
+      query: ({courseId, thumbnailUrl}) => ({
+        url: `api/instructor/course/${courseId}/thumbnail`,
+        method: "POST",
+      })
+    })
   }),
 });
 
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useGetCurrentUserQuery,
   useCreateCourseMutation,
+  useGetCategoriesQuery,
+  useCreateCategoryMutation,
+  useGetThumbnailUrlQuery,
+  useUploadThumbnailImgMutation
 } = api;
