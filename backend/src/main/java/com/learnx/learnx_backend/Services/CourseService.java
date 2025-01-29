@@ -111,17 +111,15 @@ public class CourseService {
     public List<CourseLabelDto> getAllCourses() {
         try {
             List<Course> courses = courseRepo.findAll();
-            return courses.stream().map(course -> {
+            return courses.stream().filter(course -> course.getIsPublished() != null && course.getIsPublished()).map(course -> {
                 CourseLabelDto courseLabelDto = modelMapper.map(course, CourseLabelDto.class);
                 courseLabelDto.setInstructorName(course.getInstructor().getName());
                 courseLabelDto.setInstructorId(course.getInstructor().getId());
                 return courseLabelDto;
             }).toList();
         } catch (Exception e) {
-            throw new RuntimeException("Something went wrong");
+            throw new RuntimeException("Something went wrong "+e.getMessage());
         }
-
-
     }
 
     public List<CourseLabelDto> getStudentOwnedCourses(Long studentId) {
