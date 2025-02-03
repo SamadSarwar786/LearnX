@@ -76,8 +76,7 @@ public class AuthenticationService {
             throw new ResourceNotFoundException("User is not active, Please verify your email");
         }
 
-        return userRepo.findByEmail(loginUserDto.getEmail())
-                .orElseThrow();
+        return user;
     }
 
     public <T extends BaseUserDto, U extends User> U signUp(T baseUserDto) {
