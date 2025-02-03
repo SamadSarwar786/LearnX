@@ -2,10 +2,8 @@ package com.learnx.learnx_backend.Controllers;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.LessonDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.GeneralResponse;
-import com.learnx.learnx_backend.Dtos.ResponseDtos.LessonPreSignedUrlResponseDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.LessonResponseDto;
 import com.learnx.learnx_backend.Models.Instructor;
-import com.learnx.learnx_backend.Models.Lesson;
 import com.learnx.learnx_backend.Models.User;
 import com.learnx.learnx_backend.Services.LessonService;
 import org.modelmapper.ModelMapper;
@@ -17,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -37,7 +33,7 @@ public class LessonController {
         return ResponseEntity.ok(lessonService.getAllLessons(courseId,user));
     }
 
-    @GetMapping("/lesson/{lessonId}/course/{courseId}")  // student , instructor and admin anyone can access
+    @GetMapping("/public/lesson/{lessonId}")  //public, student , instructor and admin anyone can access
     public ResponseEntity<Object> getVideoUrl(@PathVariable Long lessonId, @AuthenticationPrincipal User user) {
         String url = lessonService.getLessonURL(lessonId, user);
         Map<String , Object> response = new HashMap<>();

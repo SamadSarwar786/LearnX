@@ -61,16 +61,21 @@ public class LessonService {
 
     public String getLessonURL(Long lessonId, User user) {
         Lesson lesson = lessonRepo.findById(lessonId).orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
-        if (user.getRole() == Role.STUDENT && !enrollmentService.isUserEnrolled(lesson.getCourse().getId(), user.getId())) {
-            throw new ResourceNotFoundException("Student not enrolled in course");
-        }
-        if (user.getRole() == Role.INSTRUCTOR && !Objects.equals(lesson.getCourse().getInstructor().getId(), user.getId())) {
-            throw new ResourceNotFoundException("this course does not belong to instructor");
+        if (!lesson.getIsFree()) {
+            if(user == null)
+                throw new ResourceNotFoundException("User not found");
+            if (user.getRole() == Role.STUDENT && !enrollmentService.isUserEnrolled(lesson.getCourse().getId(), user.getId())) {
+                throw new ResourceNotFoundException("Student not enrolled in course");
+            }
+            if (user.getRole() == Role.INSTRUCTOR && !Objects.equals(lesson.getCourse().getInstructor().getId(), user.getId())) {
+                throw new ResourceNotFoundException("this course does not belong to instructor");
+            }
         }
         if (lesson.getVideoUrl().isEmpty()) {
             throw new ResourceNotFoundException("lesson is url is empty");
         }
-        return s3Service.generatePreSignedUrlForGetObject(videoBucketName, lesson.getVideoUrl()).toString();
+//        return s3Service.generatePreSignedUrlForGetObject(videoBucketName, lesson.getVideoUrl()).toString();
+        return CloudFrontService.generateCloudFrontSignedUrl(lesson.getVideoUrl());
     }
 
     public void createLesson(Long courseId, LessonDto lessonDto, Instructor instructor) {
