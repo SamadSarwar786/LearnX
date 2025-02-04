@@ -13,7 +13,7 @@ export default function Cources() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {choiceCourses.map((course) => (
-            <Link href={`/courses/${course.id}`}>
+            <Link href={`/courses/${course.id}/purchase`}>
               <CourseCard key={course.id} {...course} />
             </Link>
           ))}
