@@ -48,6 +48,7 @@ public class AuthenticationController {
 
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
+        loginResponse.setRole(authenticatedUser.getRole());
 
         return ResponseEntity.ok(loginResponse);
     }
