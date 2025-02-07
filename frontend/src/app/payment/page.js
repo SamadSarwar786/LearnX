@@ -1,35 +1,39 @@
 "use client";
 import { useEffect, useState } from "react";
 import DropIn from "braintree-web-drop-in";
-
+import {
+  useGetClientTokenQuery,
+  useProcessPaymentMutation,
+} from "@/services/api";
+import { useToast } from "@/components/hooks/use-toast";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Lock } from "lucide-react";
+const course = {
+  title: "Introduction to Php",
+  description: "Php is very good landuage",
+  isPublished: true,
+  thumbnailUrl:
+    "https://static.learnx.me/upload/instructor_6/course_12_thumbnail.jpg",
+  price: 250,
+  instructorName: "Arif Khan",
+  instructorId: 6,
+  category: {
+    id: 2,
+    name: "Design",
+    description:
+      "Learn the fundamentals of design and theory to create stunning visuals",
+  },
+  id: 12,
+};
 export default function Payment() {
-  const [clientToken, setClientToken] = useState(null);
   const [dropInInstance, setDropInInstance] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  
-  const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWFuQGdtYWlsLmNvbSIsImlhdCI6MTczNjYwMjQ5MCwiZXhwIjoxNzM2NjA2MDkwfQ.e4TwyoLcgQI1gZ2wsBKCzBoOO_GsVCmeYzJXPCvsFOI"
+  const { toast } = useToast();
   // Fetch client token from the backend
-  useEffect(() => {
-    const fetchClientToken = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/api/payment/client-token",
-          {
-            headers : {
-              "Authorization": `Bearer ${jwtToken}`, // Add your Bearer token here
-            }
-          }
-        ); // Update with your backend URL
-        const token = await response.text();
-        setClientToken(token);
-      } catch (error) {
-        console.error("Error fetching client token:", error);
-      }
-    };
-
-    fetchClientToken();
-  }, []);
+  const { data: clientToken, isLoading, isError } = useGetClientTokenQuery();
+  const [processPayment, { isLoading: paymentProcessing, isSuccess }] =
+    useProcessPaymentMutation();
 
   // Initialize Drop-in UI
   useEffect(() => {
@@ -46,64 +50,83 @@ export default function Payment() {
   const handlePayment = async () => {
     if (!dropInInstance) return;
 
-    setLoading(true);
-    setMessage("");
-
     try {
       const { nonce } = await dropInInstance.requestPaymentMethod();
-      const response = await fetch(
-        "http://localhost:8080/api/payment/process-payment",
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${jwtToken}`, // Add your Bearer token here
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nonce,
-            courseId: 4,
-          }),
-        }
-      );
-
-      const result = await response.text();
-      setMessage(result);
+      const response = await processPayment({
+        nonce,
+        courseId: 4,
+      });
+      if (response.data.status === "failure") {
+        toast({
+          variant: "destructive",
+          title: "Payment failed. Please try again",
+          description:
+            response.data.message ||
+            "Failed to process payment. Please try again.",
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: "Payment successfull",
+          description:
+            response.data.message ||
+            "Course Successfully created! Please add your content",
+        });
+      }
     } catch (error) {
-      console.error("Payment failed:", error);
-      setMessage("Payment failed. Please try again.");
-    } finally {
-      setLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Payment failed. Please try again",
+        description: "Failed to process payment. Please try again.",
+      });
     }
   };
 
+
+  if(!clientToken){
+    return <div>Loading...</div>
+  }
+
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1>Course Payment</h1>
-      {clientToken ? (
-        <div>
-          <div id="dropin-container"></div>
-          <button
-            onClick={handlePayment}
-            disabled={loading}
-            style={{
-              marginTop: "20px",
-              padding: "10px 20px",
-              fontSize: "16px",
-              backgroundColor: "blue",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            {loading ? "Processing..." : "Pay Now"}
-          </button>
+    <div>
+      <Header />
+      <div className="flex flex-col md:flex-row  px-4 py-8 m-auto max-w-7xl md:justify-center gap-5">
+        <div className="md:w-[580px]">
+          <h1 className="text-2xl">Payment Methods</h1>
+          {!isSuccess ? (
+              <div id="dropin-container"></div>
+          ) : (
+            <p>Payment Sucessfull</p>
+          )}
         </div>
-      ) : (
-        <p>Loading payment gateway...</p>
-      )}
-      {message && (
-        <p style={{ marginTop: "20px", color: "green" }}>{message}</p>
-      )}
+        <div className="md:w-[400px] p-6">
+          <h1 className="text-3xl ">Order Summary</h1>
+          <div className="mt-4 border-t pt-6">
+            {/* Total */}
+            <div className="flex justify-between">
+              <p className="font-semibold">Total:</p>
+              <p className="font-semibold text-xl">$250.00</p>
+            </div>
+          </div>
+          {/* Complete Purchase Button */}
+          <div className="mt-8">
+            <p className="text-sm mb-1">
+              By completing your purchase you agree to these{" "}
+              <Button
+                className="flex-inline p-0 gap-0 h-min"
+                variant="link"
+                size="sm"
+              >
+                Terms of Service
+              </Button>
+            </p>
+            <Button onClick={handlePayment} loading={paymentProcessing} className="w-full" variant="default">
+             {paymentProcessing ? <> </>  : <Lock />} Complete Purchase
+            </Button>
+          </div>
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 }

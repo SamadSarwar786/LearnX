@@ -13,6 +13,12 @@ export const api = createApi({
         headers.set("Authorization", `Bearer ${token}`);
       return headers;
     },
+    responseHandler: (response) => {
+      if (response.headers.get('content-type').includes('text/plain')) {
+        return response.text(); // Handle plain text responses here
+      }
+      return response.json(); // Handle JSON responses as usual
+    }
   }),
   endpoints: (builder) => ({
     login: builder.mutation({
@@ -59,7 +65,17 @@ export const api = createApi({
         url: `api/instructor/course/${courseId}/thumbnail`,
         method: "POST",
       })
-    })
+    }),
+    getClientToken: builder.query({
+      query: () => "api/payment/client-token",
+    }),
+    processPayment: builder.mutation({
+      query: (payload) => ({
+        url: "api/payment/process-payment",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -70,5 +86,7 @@ export const {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
   useGetThumbnailUrlQuery,
-  useUploadThumbnailImgMutation
+  useUploadThumbnailImgMutation,
+  useGetClientTokenQuery,
+  useProcessPaymentMutation,
 } = api;
