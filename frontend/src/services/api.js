@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/",
+    baseUrl: "http://learnx.me/",
     prepareHeaders: (headers, { getState, endpoint }) => {
       // headers.set("X-APP-NAME", process.env.REACT_APP_CODEX || "");
       if (!headers.has("Content-Type"))
