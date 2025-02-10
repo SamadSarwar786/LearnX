@@ -37,9 +37,13 @@ public class PaymentController {
     public ResponseEntity<GeneralResponse> processPayment(@Valid @RequestBody PaymentRequest paymentRequest, @AuthenticationPrincipal Student student) {
         GeneralResponse res = new GeneralResponse();
         try {
+            if(enrollmentService.isUserEnrolled(paymentRequest.getCourseId(),student.getId())) {
+                res.setMessage("You are already enrolled in this course!");
+                res.setStatus("failure");
+                return ResponseEntity.ok(res);
+            }
             Integer amount = courseService.getCourseById(paymentRequest.getCourseId()).getPrice();
             Result<Transaction> result = braintreeService.processPayment(paymentRequest.getNonce(), amount);
-
             if (result.isSuccess()) {
                 Transaction transaction = result.getTarget();
                 enrollmentService.enrollStudent(student, paymentRequest.getCourseId(), transaction.getId(), amount);
