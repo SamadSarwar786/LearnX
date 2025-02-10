@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/",
+    baseUrl: "http://learnx.me/",
     prepareHeaders: (headers, { getState, endpoint }) => {
       // headers.set("X-APP-NAME", process.env.REACT_APP_CODEX || "");
       if (!headers.has("Content-Type"))
@@ -29,10 +29,38 @@ export const api = createApi({
         body: userData,
       }),
     }),
+    // create course
     createCourse: builder.mutation({
       query: (payload) => ({
         url: "api/instructor/course",
         method: "POST",
+        body: payload,
+      }),
+    }),
+
+    // update course
+    updateCourse: builder.mutation({
+      query: ({ courseId, ...payload }) => ({
+        url: `api/instructor/course/${courseId}`,
+        method: "PUT",
+        body: payload,
+      }),
+    }),
+
+    // create lesson
+    createLesson: builder.mutation({
+      query: ({courseId, ...payload}) => ({
+        url: `api/lesson/course/${courseId}`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+
+    // update lessons
+    updateLesson: builder.mutation({
+      query: ({ courseId, lessonId, ...payload }) => ({
+        url: `api/lesson/${lessonId}/course/${courseId}`,
+        method: "PUT",
         body: payload,
       }),
     }),
@@ -54,9 +82,23 @@ export const api = createApi({
         method: 'GET',
       }),
     }),
+
     uploadThumbnailImg: builder.mutation({
-      query: ({courseId, thumbnailUrl}) => ({
+      query: ({courseId}) => ({
         url: `api/instructor/course/${courseId}/thumbnail`,
+        method: "POST",
+      })
+    }),
+    getVideoUrl: builder.query({
+      query: ({lessonId, courseId}) => ({
+        url: `api/lesson/${lessonId}/course/${courseId}/video`,
+        method: 'GET',
+      }),
+    }),
+  
+    uploadVideo: builder.mutation({
+      query: ({lessonId}) => ({
+        url: `/lesson/${lessonId}/update`,
         method: "POST",
       })
     })
@@ -70,5 +112,5 @@ export const {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
   useGetThumbnailUrlQuery,
-  useUploadThumbnailImgMutation
+  useUploadThumbnailImgMutation,
 } = api;

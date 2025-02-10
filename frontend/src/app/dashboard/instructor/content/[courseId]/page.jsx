@@ -66,10 +66,8 @@ export default function ContentUpload() {
         method: "PUT",
         body: selectedFile,
         headers: {
-          "Content-Type": selectedFile.type,
-          "Access-Control-Allow-Origin": "*",
+          "Content-Type": selectedFile.type
         },
-        mode: "cors", // Add this
       });
 
       console.log("response", response);
@@ -215,7 +213,7 @@ export default function ContentUpload() {
                   {/* {thumbnailUrlLoading ? "Uploading..." : "Upload Thumbnail"} */}
                 </Button>
 
-                <Button className="w-full">Update course content</Button>
+                <Button className="w-full" onClick={updateCourseContent}>Update course content</Button>
               </div>
             </CardContent>
           </Card>
