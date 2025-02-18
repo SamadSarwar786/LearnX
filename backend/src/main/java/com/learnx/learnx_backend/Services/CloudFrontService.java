@@ -1,8 +1,11 @@
 package com.learnx.learnx_backend.Services;
 
+import java.io.File;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
+import com.sun.tools.javac.Main;
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities;
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest;
 import software.amazon.awssdk.services.cloudfront.url.SignedUrl;
@@ -21,9 +24,11 @@ public class CloudFrontService {
             CloudFrontUtilities cloudFrontUtilities = CloudFrontUtilities.create();
             Instant expirationDate = Instant.now().plus(7, ChronoUnit.DAYS);
             String resourceUrl = CLOUDFRONT_DOMAIN + filePath;
+            String path = Objects.requireNonNull(Main.class.getClassLoader().getResource("private_key.pem")).getPath();
+            File file = new File(path);
             CannedSignerRequest cannedRequest = CannedSignerRequest.builder()
                     .resourceUrl(resourceUrl)
-                    .privateKey(new java.io.File("C:\\code\\java codes\\LearnX\\backend\\src\\main\\java\\com\\learnx\\learnx_backend\\Services\\private_key.pem").toPath())
+                    .privateKey(file.toPath())
                     .keyPairId(KEY_PAIR_ID)
                     .expirationDate(expirationDate)
                     .build();
