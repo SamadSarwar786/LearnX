@@ -21,6 +21,8 @@ const userSlice = createSlice({
 		logout: (state) => {
 			state.user = null;
 			state.isAuthenticated = false;
+			removeCookie(cookiesList.authorizationToken);
+			// removeCookie(cookiesList.hcToken);
 		},
 		validateUser: (state) => {
 			const token = getJwt();

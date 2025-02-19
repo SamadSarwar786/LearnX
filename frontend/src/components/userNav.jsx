@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,38 +10,59 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/store/slices/userSlice";
+import { useRouter } from "next/navigation";
 
 export function UserNav() {
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login");
+  };
+
+  const initials = user.name
+  .split(' ')
+  .map(word => word[0])
+  .join('')
+  .toUpperCase()
+  .slice(0, 2)
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
-              alt="User"
-            />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarFallback className="bg-primary text-white">{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
+            <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              john@example.com
+              {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/dashboard">
-            <DropdownMenuItem>My courses</DropdownMenuItem>
-          </Link>
+          {user && user.role === "INSTRUCTOR" ? (
+            <Link href="/dashboard/instructor/courses">
+              <DropdownMenuItem>My Courses</DropdownMenuItem>
+            </Link>
+          ) : (
+            <Link href="/courses">
+              <DropdownMenuItem>Courses</DropdownMenuItem>
+            </Link>
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

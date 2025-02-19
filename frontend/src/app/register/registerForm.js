@@ -60,7 +60,6 @@ export function RegisterForm() {
   });
 
   async function onSubmit(values) {
-    console.log({ ...values, userType });
     try {
       const response = await register({ userData: { ...values }, userType });
       // Dispatch loginSuccess action with the user data

@@ -1,9 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Layout, BookOpen, Video, Users, BarChart, Settings, LogOut } from "lucide-react";
+import { BookOpen, Video, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useDispatch } from "react-redux";
+import { logout } from "@/store/slices/userSlice";
+import { useRouter } from "next/navigation";
 
 const studentNav = [
   {
@@ -37,6 +40,13 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const isInstructor = pathname.includes("/instructor");
   const navigation = isInstructor ? instructorNav : studentNav;
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,6 +81,7 @@ export default function DashboardLayout({
                 })}
                 <button
                   className="w-full group flex items-center px-2 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground mt-4"
+                  onClick={handleLogout}
                 >
                   <LogOut className="mr-3 h-5 w-5" />
                   Logout

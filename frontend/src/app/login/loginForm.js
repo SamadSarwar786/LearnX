@@ -45,7 +45,6 @@ export function LoginForm() {
   });
 
   async function onSubmit(values) {
-    console.log(values);
     try {
       const response = await login(values).unwrap();
       // Dispatch loginSuccess action with the user data
@@ -53,16 +52,15 @@ export function LoginForm() {
         setAuthToken(response.token);
         dispatch(loginSuccess());
         dispatch(validateUser());
-        console.log("Login successful", response);
 
         // Show success toast with API response message
         toast({
-          variant: "success",
+          variant: "default",
           title: "Login Successful",
           description: response.message || "Successfully logged in!",
         });
 
-        router.push("/dashboard/instructor");
+        router.push("/");
       }
     } catch (error) {
       console.error("Login failed", error);

@@ -20,24 +20,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, Video, File, Image as ImageIcon } from "lucide-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { Upload, Video } from "lucide-react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import {
   useGetCategoriesQuery,
   useGetThumbnailUrlQuery,
   useUploadThumbnailImgMutation,
+  useUpdateCourseMutation
 } from "@/services/api";
 import { useToast } from "@/components/hooks/use-toast";
 
 export default function ContentUpload() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const courseId = params.courseId;
   const { toast } = useToast();
-  const { data: thumbnailUrl } = useGetThumbnailUrlQuery({ courseId });
+  const { data: thumbnailUrl, isLoading: thumbnailUrlLoading } = useGetThumbnailUrlQuery({ courseId });
   const [uploadThumbnailImg] = useUploadThumbnailImgMutation();
+  const [updateCourse] = useUpdateCourseMutation();
 
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [price, setPrice] = useState(""); 
+  const [previewUrl, setPreviewUrl] = useState(null); 
   const { data: categories, isLoading, error } = useGetCategoriesQuery();
 
   // get the title and subtitles for the created course from query param
@@ -70,8 +76,6 @@ export default function ContentUpload() {
         },
       });
 
-      console.log("response", response);
-
       if (!response.ok) {
         throw new Error("Failed to upload to pre-signed URL");
       }
@@ -91,9 +95,39 @@ export default function ContentUpload() {
     } catch (error) {
       console.error("Upload error:", error);
       toast({
-        variant: "error",
+        variant: "destructive",
         title: "Error",
         description: "Failed to upload thumbnail. Please try again.",
+      });
+    }
+  };
+
+  const updateCourseContent = async () => {
+    try {
+      const payload = {
+        courseId,
+        title,
+        price,
+        description,
+        categoryId: selectedCategory,
+      };
+
+      await updateCourse(payload).unwrap();
+
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "Course content updated successfully!",
+      });
+
+      router.push("/dashboard/instructor");
+
+    } catch (error) {
+      console.error("Update error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update course content. Please try again.",
       });
     }
   };
@@ -102,8 +136,19 @@ export default function ContentUpload() {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
     }
   };
+
+  // Cleanup preview URL when component unmounts or file is removed
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
     <div className="space-y-6">
@@ -151,7 +196,7 @@ export default function ContentUpload() {
 
                 <div className="space-y-2">
                   <Label htmlFor="course">Select Course</Label>
-                  <Select>
+                  <Select onValueChange={(value) => setSelectedCategory(value)} value={selectedCategory}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -172,29 +217,55 @@ export default function ContentUpload() {
                     </SelectContent>
                   </Select>
                 </div>
-
+                <div className="space-y-2">
+                  <Label htmlFor="price">Course Price</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="Enter course price"
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label>Upload Thumbnail</Label>
                   <div className="border-2 border-dashed rounded-lg p-8 text-center space-y-4">
-                    <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
-                    <div>
-                      <Label
-                        htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md font-semibold text-primary hover:text-primary/80"
-                      >
-                        <span>Click to upload</span>
-                        <Input
-                          id="file-upload"
-                          type="file"
-                          className="sr-only"
-                          onChange={handleFileSelect}
-                          accept="image/*"
-                        />
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        or drag and drop
-                      </p>
-                    </div>
+                    {(selectedFile) ? (<div className="flex flex-col items-center gap-4">
+                      <img
+                        src={previewUrl}
+                        alt="Thumbnail preview"
+                        className="max-w-[200px] h-auto rounded-lg"
+                      />
+                       <Button variant="outline" onClick={() => {
+                          setSelectedFile(null);
+                          setPreviewUrl(null);
+                        }}>
+                          Remove
+                        </Button>
+                    </div>) : (<>
+                      <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
+                      <div>
+                        <Label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer rounded-md font-semibold text-primary hover:text-primary/80"
+                        >
+                          <span>Click to upload</span>
+                          <Input
+                            id="file-upload"
+                            name="thumbnail"
+                            type="file"
+                            className="sr-only"
+                            onChange={handleFileSelect}
+                            accept="image/*"
+                          />
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          or drag and drop
+                        </p>
+                      </div>
+                    </>)}
                     {selectedFile && (
                       <div className="text-sm text-muted-foreground">
                         Selected: {selectedFile.name}
@@ -206,14 +277,14 @@ export default function ContentUpload() {
                 <Button
                   className="w-full"
                   onClick={handleUploadThumbnail}
-                  // disabled={!selectedFile || thumbnailUrlLoading} // Add disabled state
+                  disabled={!selectedFile || thumbnailUrlLoading} // Add disabled state
                 >
                   <Upload className="mr-2 h-4 w-4" />
                   upload
-                  {/* {thumbnailUrlLoading ? "Uploading..." : "Upload Thumbnail"} */}
+                  { thumbnailUrlLoading ? "Uploading..." : "Upload Thumbnail"}
                 </Button>
 
-                <Button className="w-full" onClick={updateCourseContent}>Update course content</Button>
+                <Button className="w-full" onClick={updateCourseContent}>Save course content</Button>
               </div>
             </CardContent>
           </Card>

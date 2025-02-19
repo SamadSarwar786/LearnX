@@ -6,16 +6,9 @@ export function middleware(request) {
     const path = request.nextUrl.pathname;
 
     // Define public paths
-    const isPublicPath = path === '/login' || 
-                        path === '/register';
-                        // path === '/';
+    const isPublicPath = path === '/login' || path === '/register' || path === '/';
 
     const token = request.cookies.get(cookiesList.authorizationToken)?.value || '';
-
-    // Redirect logic for public paths
-    if(isPublicPath && token) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
 
     // Redirect logic for protected paths
     if(!isPublicPath && !token) {

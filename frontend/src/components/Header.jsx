@@ -13,7 +13,7 @@ export function Header() {
       <header className="border-b bg-white flex justify-center">
       <div className="container flex h-16 items-center px-4">
         <MainNav />
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="ml-auto flex items-center space-x-2">
         {isAuthenticated ? (
             <UserNav />
           ) : (

@@ -53,6 +53,10 @@ export const api = createApi({
       }),
     }),
 
+    getInstructorCourses: builder.query({
+      query: () => "api/instructor/courses",
+    }),
+    
     // create lesson
     createLesson: builder.mutation({
       query: ({courseId, ...payload}) => ({
@@ -82,6 +86,8 @@ export const api = createApi({
       // Invalidate the categories query after creating a new category
       invalidates: ['getCategories'],
     }),
+
+    // get thumbnail url
     getThumbnailUrl: builder.query({
       query: ({courseId}) => ({
         url: `api/instructor/course/${courseId}/thumbnail`,
@@ -131,4 +137,8 @@ export const {
   useUploadThumbnailImgMutation,
   useGetClientTokenQuery,
   useProcessPaymentMutation,
+  useUpdateCourseMutation,
+  useGetInstructorCoursesQuery,
+  useCreateLessonMutation,
+  useUpdateLessonMutation,
 } = api;
