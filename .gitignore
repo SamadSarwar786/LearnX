@@ -35,6 +35,9 @@ build/
 
 # Ignore application properties containing sensitive data
 application.properties
+application-dev.properties
+application-prod.properties
+
 
 # Optionally ignore YAML configuration as well
 application.yml
