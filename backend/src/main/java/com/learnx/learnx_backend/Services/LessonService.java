@@ -21,27 +21,27 @@ import java.util.Objects;
 @Service
 public class LessonService {
 
-    @Autowired
-    private S3Service s3Service;
+    private final S3Service s3Service;
+    private final EnrollmentService enrollmentService;
+    private final LessonRepo lessonRepo;
+    private final CourseService courseService;
+    private final CloudFrontService cloudFrontService;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private EnrollmentService enrollmentService;
-
-    @Autowired
-    private LessonRepo lessonRepo;
-
-    @Autowired
-    private CourseService courseService;
+    public LessonService(S3Service s3Service , EnrollmentService enrollmentService, LessonRepo lessonRepo, CourseService courseService,CloudFrontService cloudFrontService, ModelMapper modelMapper){
+        this.s3Service = s3Service;
+        this.enrollmentService = enrollmentService;
+        this.lessonRepo = lessonRepo;
+        this.courseService = courseService;
+        this.cloudFrontService = cloudFrontService;
+        this.modelMapper = modelMapper;
+    }
 
     @Value("${aws.s3.video-bucket}")
     private String videoBucketName;
 
     @Value("${aws.s3.thumbnail-bucket}")
     private String thumbnailBucketName;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
 
     public LessonResponseDto getAllLessons(Long courseId, User user) {
         try {
@@ -54,7 +54,6 @@ public class LessonService {
             return res;
         } catch (Exception e) {
             throw new RuntimeException("Error while getting lessons " + e.getMessage(), e);
-
         }
     }
 
@@ -75,7 +74,7 @@ public class LessonService {
             throw new ResourceNotFoundException("lesson is url is empty");
         }
 //        return s3Service.generatePreSignedUrlForGetObject(videoBucketName, lesson.getVideoUrl()).toString();
-        return CloudFrontService.generateCloudFrontSignedUrl(lesson.getVideoUrl());
+        return cloudFrontService.generateCloudFrontSignedUrl(lesson.getVideoUrl());
     }
 
     public void createLesson(Long courseId, LessonDto lessonDto, Instructor instructor) {

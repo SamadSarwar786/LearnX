@@ -3,20 +3,24 @@ package com.learnx.learnx_backend.Services;
 import java.io.File;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 
-import com.sun.tools.javac.Main;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities;
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest;
 import software.amazon.awssdk.services.cloudfront.url.SignedUrl;
 
+@Service
 public class CloudFrontService {
+
+    @Autowired
+    private ResourceUtils resourceUtils;
 
     private static final String CLOUDFRONT_DOMAIN = System.getenv("CLOUDFRONT_DOMAIN");
     private static final String KEY_PAIR_ID = System.getenv("KEY_PAIR_ID");
 //    private static final String PRIVATE_KEY = System.getenv("CLOUDFRONT_PRIVATE_KEY");
 
-    public static String generateCloudFrontSignedUrl(String filePath) {
+    public String generateCloudFrontSignedUrl(String filePath) {
         try {
             if(filePath == null || filePath.isEmpty()) {
                 throw new IllegalArgumentException("File path cannot be null or empty");
@@ -24,11 +28,10 @@ public class CloudFrontService {
             CloudFrontUtilities cloudFrontUtilities = CloudFrontUtilities.create();
             Instant expirationDate = Instant.now().plus(7, ChronoUnit.DAYS);
             String resourceUrl = CLOUDFRONT_DOMAIN + filePath;
-            String path = Objects.requireNonNull(Main.class.getClassLoader().getResource("private_key.pem")).getPath();
-            File file = new File(path);
+            File privateKeyFile = resourceUtils.extractResourceToTempFile("private_key.pem");
             CannedSignerRequest cannedRequest = CannedSignerRequest.builder()
                     .resourceUrl(resourceUrl)
-                    .privateKey(file.toPath())
+                    .privateKey(privateKeyFile.toPath())
                     .keyPairId(KEY_PAIR_ID)
                     .expirationDate(expirationDate)
                     .build();
