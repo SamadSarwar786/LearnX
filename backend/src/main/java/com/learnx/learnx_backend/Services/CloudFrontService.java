@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities;
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest;
@@ -16,8 +17,10 @@ public class CloudFrontService {
     @Autowired
     private ResourceUtils resourceUtils;
 
-    private static final String CLOUDFRONT_DOMAIN = System.getenv("CLOUDFRONT_DOMAIN");
-    private static final String KEY_PAIR_ID = System.getenv("KEY_PAIR_ID");
+    @Value("${cloudfront.domain.url}")
+    private String CLOUDFRONT_DOMAIN;
+    @Value("${cloudfront.key.paid.id}")
+    private String KEY_PAIR_ID;
 //    private static final String PRIVATE_KEY = System.getenv("CLOUDFRONT_PRIVATE_KEY");
 
     public String generateCloudFrontSignedUrl(String filePath) {
