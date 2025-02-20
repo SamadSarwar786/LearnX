@@ -13,7 +13,7 @@ export function CourseSection({ title, courses }) {
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {courses.map((course) => (
-          <Link href={`/courses/${course.id}/purchase`}>
+          <Link key={course.id} href={`/courses/${course.id}/purchase`}>
              <CourseCard key={course.id} {...course} />
           </Link>
         ))}
