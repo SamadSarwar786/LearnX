@@ -41,6 +41,7 @@ public class JwtService {
         map.put("id",userDetails.getId());
         map.put("email",userDetails.getUsername());
         map.put("name",userDetails.getName());
+        map.put("role",userDetails.getRole());
         return generateToken(map, userDetails);
     }
 
