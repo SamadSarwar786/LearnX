@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,8 +8,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { getCourseById } from "@/store/slices/coursesSlice";
 
 export default function CoursePage() {
+  const params = useParams();
+  const router = useRouter();
+  const { id } = params;
+
+  const courseId = Number(id);
+  const course = useSelector((state) => getCourseById(state, courseId));
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -18,13 +27,12 @@ export default function CoursePage() {
 
       {/* Hero Section */}
       <div className="relative h-[400px]">
-        {/* <Image
-          src="https://images.unsplash.com/photo-1659301254614-8d6a9d46f26a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dGVhY2hpbmd8ZW58MHwwfDB8fHww"
-          alt="Course Hero"
-          fill
-          className="object-cover"
-        /> */}
-        <div className="absolute inset-0 bg-black/50" />
+        <img
+          src={course?.thumbnailUrl}
+          alt={course?.title}
+          className="absolute w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       <main className="container mx-auto px-4 py-8">
@@ -32,7 +40,7 @@ export default function CoursePage() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
             <div className="flex gap-2 mb-6">
-              <h2 className="text-lg font-semibold">Overview</h2>
+              <h2 className="text-lg font-semibold">{course?.title}</h2>
             </div>
 
             {/* Rating Section */}
@@ -87,7 +95,7 @@ export default function CoursePage() {
                 </div>
 
                 {/* Reviews */}
-                <div className="mt-8 space-y-6">
+                {/* <div className="mt-8 space-y-6">
                   {[1, 2].map((review) => (
                     <div key={review} className="border-b pb-6 last:border-0">
                       <div className="flex items-start gap-4">
@@ -119,6 +127,13 @@ export default function CoursePage() {
                       </div>
                     </div>
                   ))}
+                </div> */}
+
+                <div className="mt-8 space-y-6">
+                  <h3 className="font-semibold">Course Description</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {course?.description}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -128,19 +143,17 @@ export default function CoursePage() {
           <div className="md:col-span-1">
             <Card className="sticky top-4">
               <CardContent className="p-6">
+                {/* add the course preview video here */}
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-3xl font-bold">$49.65</span>
+                    <span className="text-3xl font-bold">${course?.price}</span>
                     <span className="text-muted-foreground line-through">
-                      $99.99
+                      ${course?.price + 100}
                     </span>
                     <Badge>50% Off</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    17 hours left at this price
-                  </p>
                 </div>
-                <Button className="w-full mb-4">Buy Now</Button>
+                <Button onClick={() => router.push("/payment")} className="w-full mb-4">Buy Now</Button>
                 <div className="space-y-4">
                   <h3 className="font-semibold">This Course Included</h3>
                   <ul className="space-y-2">

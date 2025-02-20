@@ -35,6 +35,7 @@ export const api = createApi({
         body: userData,
       }),
     }),
+
     // create course
     createCourse: builder.mutation({
       query: (payload) => ({
@@ -53,8 +54,23 @@ export const api = createApi({
       }),
     }),
 
+    // get instructor courses
     getInstructorCourses: builder.query({
       query: () => "api/instructor/courses",
+    }),
+
+    // get student courses  
+    getStudentCourses: builder.query({
+      query: () => "api/student/courses",
+    }),
+
+    // get public courses
+    getPublicCourses: builder.query({
+      query: () => "api/public/courses",
+    }),
+
+    getCourseLessons: builder.query({
+      query: ({courseId}) => `api/lessons/course/${courseId}`,
     }),
     
     // create lesson
@@ -74,6 +90,7 @@ export const api = createApi({
         body: payload,
       }),
     }),
+
     getCategories: builder.query({
       query: () => "api/public/category",
     }),
@@ -101,6 +118,8 @@ export const api = createApi({
         method: "POST",
       })
     }),
+
+    // get video url
     getVideoUrl: builder.query({
       query: ({lessonId, courseId}) => ({
         url: `api/lesson/${lessonId}/course/${courseId}/video`,
@@ -108,6 +127,7 @@ export const api = createApi({
       }),
     }),
   
+    // upload video
     uploadVideo: builder.mutation({
       query: ({lessonId}) => ({
         url: `/lesson/${lessonId}/update`,
@@ -130,15 +150,20 @@ export const api = createApi({
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useCreateCourseMutation,
   useGetCategoriesQuery,
   useCreateCategoryMutation,
+  useCreateCourseMutation,
   useGetThumbnailUrlQuery,
   useUploadThumbnailImgMutation,
+  useGetVideoUrlQuery,
+  useUploadVideoMutation,
   useGetClientTokenQuery,
   useProcessPaymentMutation,
   useUpdateCourseMutation,
   useGetInstructorCoursesQuery,
+  useGetStudentCoursesQuery,
+  useGetPublicCoursesQuery,
   useCreateLessonMutation,
   useUpdateLessonMutation,
+  useGetCourseLessonsQuery,
 } = api;

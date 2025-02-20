@@ -22,16 +22,6 @@ const instructorNav = [
     href: "/dashboard/instructor",
     icon: BookOpen
   },
-  {
-    title: "Content",
-    href: "/dashboard/instructor/content",
-    icon: Video
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/instructor/settings",
-    icon: Settings
-  }
 ];
 
 export default function DashboardLayout({

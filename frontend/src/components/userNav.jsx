@@ -52,12 +52,12 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {user && user.role === "INSTRUCTOR" ? (
-            <Link href="/dashboard/instructor/courses">
-              <DropdownMenuItem>My Courses</DropdownMenuItem>
+            <Link href="/dashboard/instructor"> {/* here only show the courses that the user has created */}  
+              <DropdownMenuItem>My Dashboard</DropdownMenuItem>
             </Link>
           ) : (
-            <Link href="/courses">
-              <DropdownMenuItem>Courses</DropdownMenuItem>
+            <Link href="/dashboard/"> {/* here only show the courses that the user has purchased */}
+              <DropdownMenuItem>My Dashboard</DropdownMenuItem>
             </Link>
           )}
         </DropdownMenuGroup>

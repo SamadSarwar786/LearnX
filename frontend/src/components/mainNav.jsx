@@ -25,9 +25,9 @@ export function MainNav({ className, ...props }) {
       </Link>
       {user && user.role === "INSTRUCTOR" ? (
         <Link
-          href="/dashboard/instructor/courses"
+          href="/dashboard/instructor"
           className={cn("text-sm font-medium transition-colors hover:text-primary", {
-            'text-primary': pathname === '/dashboard/instructor/courses', 
+            'text-primary': pathname === '/dashboard/instructor', 
           })}
         >
           Courses
@@ -41,23 +41,6 @@ export function MainNav({ className, ...props }) {
         >
           Courses
         </Link>
-      )}
-      {user && (
-        user.role === "INSTRUCTOR" ? (
-            <Link
-            href="/dashboard/instructor"
-            className={cn("text-sm font-medium transition-colors hover:text-primary")}
-          >
-            Dashboard
-          </Link>
-        ) : (
-          <Link
-            href="/dashboard"
-            className={cn("text-sm font-medium transition-colors hover:text-primary")}
-          >
-            Dashboard
-          </Link>
-        )
       )}
     </nav>
   );
