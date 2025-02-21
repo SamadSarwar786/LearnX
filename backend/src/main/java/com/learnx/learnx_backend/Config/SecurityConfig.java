@@ -88,7 +88,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000") // Allows requests from this origin
+                        .allowedOrigins("http://localhost:3000", "https://learnx.me") // Allows requests from this origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS") // Allows specified HTTP methods
                         .allowedHeaders("*") // Allows all headers
                         .allowCredentials(true); // Allows credentials (e.g., cookies)
