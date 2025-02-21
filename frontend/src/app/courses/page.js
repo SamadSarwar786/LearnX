@@ -19,7 +19,7 @@ export default function Cources() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* here check if the course is published or not if purchased then show the course lesson page */}
             {publicCourses.map((course) => (
-              <Link href={`/courses/${course.id}/purchase`}>
+              <Link key={course.id} href={`/courses/${course.id}/purchase`}>
                 <CourseCard key={course.id} {...course} />
               </Link>
             ))}

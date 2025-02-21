@@ -56,7 +56,7 @@ function DashboardPage() {
         {studentCourses?.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {studentCourses.map((course) => (
-              <Link href={`/courses/${course.id}`}>
+              <Link key={course.id} href={`/courses/${course.id}`}>
                 <CourseCard key={course.id} {...course} />
               </Link>
             ))}
