@@ -1,6 +1,7 @@
 package com.learnx.learnx_backend.Services;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.LessonDto;
+import com.learnx.learnx_backend.Dtos.ResponseDtos.AllLessonsResponseDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.LessonResponseDto;
 import com.learnx.learnx_backend.Enums.Role;
 import com.learnx.learnx_backend.Exceptions.ResourceNotFoundException;
@@ -10,7 +11,6 @@ import com.learnx.learnx_backend.Models.Lesson;
 import com.learnx.learnx_backend.Models.User;
 import com.learnx.learnx_backend.Repositories.LessonRepo;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,10 +43,10 @@ public class LessonService {
     @Value("${aws.s3.thumbnail-bucket}")
     private String thumbnailBucketName;
 
-    public LessonResponseDto getAllLessons(Long courseId, User user) {
+    public AllLessonsResponseDto getAllLessons(Long courseId, User user) {
         try {
             List<Lesson> lessons = lessonRepo.findAllByCourseId(courseId);
-            LessonResponseDto res = new LessonResponseDto();
+            AllLessonsResponseDto res = new AllLessonsResponseDto();
             if (user != null && enrollmentService.isUserEnrolled(courseId, user.getId())) {
                 res.setIsPaid(true);
             }
@@ -77,7 +77,7 @@ public class LessonService {
         return cloudFrontService.generateCloudFrontSignedUrl(lesson.getVideoUrl());
     }
 
-    public void createLesson(Long courseId, LessonDto lessonDto, Instructor instructor) {
+    public LessonResponseDto createLesson(Long courseId, LessonDto lessonDto, Instructor instructor) {
         try {
             Course course = courseService.getCourseById(courseId);
             if (course == null) throw new ResourceNotFoundException("course not found with this is id");
@@ -89,7 +89,8 @@ public class LessonService {
             Lesson lesson = new Lesson();
             modelMapper.map(lessonDto, lesson);
             lesson.setCourse(course);
-            lessonRepo.save(lesson);
+            Lesson savedLesson = lessonRepo.save(lesson);
+            return modelMapper.map(savedLesson , LessonResponseDto.class);
         } catch (Exception e) {
             throw new RuntimeException("getting error creating lesson " + e.getMessage(), e);
         }
@@ -120,7 +121,7 @@ public class LessonService {
         }
     }
 
-    public void updateLesson(Long lessonId, Long courseId, LessonDto lessonDto, Instructor instructor) {
+    public LessonResponseDto updateLesson(Long lessonId, Long courseId, LessonDto lessonDto, Instructor instructor) {
         try {
             Course course = courseService.getCourseById(courseId);
             if (course == null)
@@ -132,7 +133,8 @@ public class LessonService {
                 throw new ResourceNotFoundException("this lesson does not belong to course");
 
             modelMapper.map(lessonDto, lesson);
-            lessonRepo.save(lesson);
+            Lesson savedLesson = lessonRepo.save(lesson);
+            return modelMapper.map(savedLesson, LessonResponseDto.class);
         } catch (Exception e) {
             throw new RuntimeException("error updating lesson" + e.getMessage(), e);
         }

@@ -1,12 +1,13 @@
 package com.learnx.learnx_backend.Dtos.ResponseDtos;
 
-import com.learnx.learnx_backend.Models.Lesson;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class LessonResponseDto {
-    List<Lesson> lessons;
-    private Boolean isPaid = false;
+    private Long id;
+    private String title;
+    private String description;
+    private Boolean isPublished = false;
+    private Boolean isFree = false;
 }

@@ -2,6 +2,7 @@ package com.learnx.learnx_backend.Controllers;
 
 import com.learnx.learnx_backend.Dtos.RequestDtos.LessonDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.GeneralResponse;
+import com.learnx.learnx_backend.Dtos.ResponseDtos.AllLessonsResponseDto;
 import com.learnx.learnx_backend.Dtos.ResponseDtos.LessonResponseDto;
 import com.learnx.learnx_backend.Models.Instructor;
 import com.learnx.learnx_backend.Models.User;
@@ -29,7 +30,7 @@ public class LessonController {
     ModelMapper modelMapper;
 
     @GetMapping("/public/lessons/course/{courseId}")  // student , instructor and admin anyone can access
-    public ResponseEntity<LessonResponseDto> getAllLessons(@PathVariable Long courseId, @AuthenticationPrincipal User user) {
+    public ResponseEntity<AllLessonsResponseDto> getAllLessons(@PathVariable Long courseId, @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(lessonService.getAllLessons(courseId,user));
     }
 
@@ -45,21 +46,15 @@ public class LessonController {
 
     @PostMapping("/lesson/course/{courseId}")  // instructor only
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<GeneralResponse> createLesson(@PathVariable Long courseId, @RequestBody LessonDto lessonDto,@AuthenticationPrincipal Instructor instructor) {
-        GeneralResponse res = new GeneralResponse();
-        lessonService.createLesson(courseId, lessonDto,instructor);
-        res.setMessage("lesson created successfully");
-        res.setStatus("success");
-        return ResponseEntity.ok(res);
+    public ResponseEntity<LessonResponseDto> createLesson(@PathVariable Long courseId, @RequestBody LessonDto lessonDto,@AuthenticationPrincipal Instructor instructor) {
+        LessonResponseDto lessonResponseDto = lessonService.createLesson(courseId, lessonDto,instructor);
+        return ResponseEntity.ok(lessonResponseDto);
     }
     @PutMapping("/lesson/{lessonId}/course/{courseId}")  // instructor only
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<GeneralResponse> updateLesson(@PathVariable Long lessonId,@PathVariable Long courseId, @RequestBody LessonDto lessonDto,@AuthenticationPrincipal Instructor instructor) {
-        GeneralResponse res = new GeneralResponse();
-        lessonService.updateLesson(lessonId,courseId,lessonDto,instructor);
-        res.setMessage("lesson updated successfully");
-        res.setStatus("success");
-        return ResponseEntity.ok(res);
+    public ResponseEntity<LessonResponseDto> updateLesson(@PathVariable Long lessonId,@PathVariable Long courseId, @RequestBody LessonDto lessonDto,@AuthenticationPrincipal Instructor instructor) {
+        LessonResponseDto lessonResponseDto =  lessonService.updateLesson(lessonId,courseId,lessonDto,instructor);
+        return ResponseEntity.ok(lessonResponseDto);
     }
 
     @GetMapping("/lesson/{lessonId}/course/{courseId}/video")  // instructor only
