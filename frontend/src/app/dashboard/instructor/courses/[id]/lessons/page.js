@@ -55,7 +55,7 @@ export default function Lessons() {
                 setDescription("");
 
                 toast({
-                    variant: "default",
+                    variant: "success",
                     title: "Lesson Created!",
                     description: response.message || "Lesson Successfully created! Please add your content",
                 });
@@ -85,7 +85,7 @@ export default function Lessons() {
     //       await updateCourse(payload).unwrap();
 
     //       toast({
-    //         variant: "default",
+    //         variant: "success",
     //         title: "Course Published!",
     //         description: "Course published successfully!",
     //       });

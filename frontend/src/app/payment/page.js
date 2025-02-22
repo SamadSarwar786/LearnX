@@ -66,7 +66,7 @@ export default function Payment() {
         });
       } else {
         toast({
-          variant: "default",
+          variant: "success",
           title: "Payment successfull",
           description:
             response.data.message ||

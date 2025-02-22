@@ -55,7 +55,7 @@ export function LoginForm() {
 
         // Show success toast with API response message
         toast({
-          variant: "default",
+          variant: "success",
           title: "Login Successful",
           description: response.message || "Successfully logged in!",
         });

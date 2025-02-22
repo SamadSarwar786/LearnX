@@ -61,7 +61,7 @@ export default function InstructorDashboard() {
       console.error("Failed to create course:", error);
       toast({
         // Add failure toast
-        variant: "error",
+        variant: "destructive",
         title: "Error",
         description: "Failed to create course. Please try again.",
       });
@@ -78,7 +78,7 @@ export default function InstructorDashboard() {
       await updateCourse(payload).unwrap();
 
       toast({
-        variant: "default",
+        variant: "success",
         title: "Course Published!",
         description: "Course published successfully!",
       });

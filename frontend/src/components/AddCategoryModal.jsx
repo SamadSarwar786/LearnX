@@ -29,6 +29,7 @@ export function AddCategoryModal({ open, onOpenChange }) {
       setCategoryName(""); // Reset input
       onOpenChange(false); // Close modal
       toast({
+        variant: "success",
         title: "Success",
         description: "Category created successfully",
       });

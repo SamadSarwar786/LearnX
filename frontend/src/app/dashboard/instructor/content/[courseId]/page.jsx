@@ -107,7 +107,7 @@ export default function ContentUpload() {
       await updateCourse(payload).unwrap();
 
       toast({
-        variant: "default",
+        variant: "success",
         title: "Success",
         description: "Course content updated successfully!",
       });
