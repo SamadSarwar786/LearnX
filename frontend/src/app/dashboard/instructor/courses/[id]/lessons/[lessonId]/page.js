@@ -18,45 +18,44 @@ import {
   useGetVideoUrlQuery,
   useUploadVideoMutation,
   useUpdateLessonMutation,
+  api,
 } from "@/services/api";
 import { useToast } from "@/components/hooks/use-toast";
 
 export default function LessonUpload() {
   const params = useParams();
-  
-  console.log(params);
-  
+
   const lessonId = params.lessonId;
   const courseId = params.id;
 
   const router = useRouter();
   const { toast } = useToast();
 
-  console.log(lessonId, courseId);
+  console.log(lessonId, "courseId", courseId);
 
   const lesson = {
     id: 1,
     title: "Lesson 1",
     description: "Lesson 1 description",
     isFree: false,
-    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-  }
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  };
 
   // State variables
   const [title, setTitle] = useState(lesson?.title || "");
   const [description, setDescription] = useState(lesson?.description || "");
   const [isFree, setIsFree] = useState(lesson?.isFree || false); // Paid or Free toggle
   const [selectedFile, setSelectedFile] = useState(null);
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState(lesson?.videoUrl || "");
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState(
+    lesson?.videoUrl || ""
+  );
 
-  const { data: videoUrl, isLoading: videoUrlLoading } =
-    useGetVideoUrlQuery({ lessonId, courseId });
-
-  console.log(videoUrl);
+  const [getVideoUrl, { data: videoUrl, isLoading: videoUrlLoading }] =
+    api.endpoints.getVideoUrl.useLazyQuery();
 
   const [uploadVideo] = useUploadVideoMutation();
   const [updateLesson] = useUpdateLessonMutation();
-  
+
   // Effect to update state when lesson is available
   useEffect(() => {
     if (lesson) {
@@ -79,6 +78,9 @@ export default function LessonUpload() {
   const handleUploadVideo = async () => {
     if (!selectedFile) return;
 
+
+    await getVideoUrl({ lessonId, courseId });
+
     try {
       const response = await fetch(videoUrl, {
         method: "PUT",
@@ -87,8 +89,8 @@ export default function LessonUpload() {
       });
 
       if (!response.ok) throw new Error("Failed to upload video");
-
-      await uploadVideo({ lessonId }).unwrap();
+   
+      await uploadVideo({ lessonId, courseId }).unwrap();
 
       toast({
         variant: "success",
@@ -147,10 +149,11 @@ export default function LessonUpload() {
       <Card>
         <CardHeader>
           <CardTitle>Update Lesson</CardTitle>
-          <CardDescription>Edit lesson details and upload video</CardDescription>
+          <CardDescription>
+            Edit lesson details and upload video
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          
           {/* Title Input */}
           <div className="space-y-2">
             <Label htmlFor="title">Lesson Title</Label>
@@ -230,7 +233,9 @@ export default function LessonUpload() {
                         accept="video/*"
                       />
                     </Label>
-                    <p className="text-sm text-muted-foreground">or drag and drop</p>
+                    <p className="text-sm text-muted-foreground">
+                      or drag and drop
+                    </p>
                   </div>
                 </>
               )}

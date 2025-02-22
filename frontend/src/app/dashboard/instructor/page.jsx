@@ -26,6 +26,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/hooks/use-toast";
 import { Loader2, Plus, Edit2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { addCourse } from "@/store/slices/coursesSlice";
+import { useDispatch } from "react-redux";
 
 export default function InstructorDashboard() {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +36,7 @@ export default function InstructorDashboard() {
   const [createCourse, { isLoading }] = useCreateCourseMutation();
   const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useDispatch();
   const { data: courses, isLoading: coursesLoading } = useGetInstructorCoursesQuery();
 
   const [updateCourse] = useUpdateCourseMutation();
@@ -52,9 +55,10 @@ export default function InstructorDashboard() {
           title: "Course Created!",
           description: response.message || "Course Successfully created! Please add your content",
         });
+        dispatch(addCourse(response));
 
         router.push(
-          `/dashboard/instructor/content/${response.id}`
+          `/dashboard/instructor/courses/${response.id}`
         );
       }
     } catch (error) {
@@ -223,7 +227,7 @@ export default function InstructorDashboard() {
                     <BookOpen className="h-4 w-4" />
                     Lessons
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/instructor/content/${course.id}`)}>
+                  <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/instructor/courses/${course.id}`)}>
                     <Edit2 className="h-4 w-4" />
                     Edit
                   </Button>

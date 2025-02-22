@@ -37,8 +37,8 @@ export default function Lessons() {
     const [createLesson, { isLoading }] = useCreateLessonMutation();
     const router = useRouter();
     const { toast } = useToast();
-    const { data: lessons, isLoading: lessonsLoading } = useGetCourseLessonsQuery({ courseId });
-
+    const { data: response, isLoading: lessonsLoading } = useGetCourseLessonsQuery({ courseId });
+    const lessons = response?.lessons || [];
     const [updateLesson] = useUpdateLessonMutation();
 
     const handleCreateLesson = async () => {
@@ -174,7 +174,7 @@ export default function Lessons() {
                                     </p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/instructor/content/${course.id}/lessons/${lesson.id}`)}>
+                                    <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/instructor/courses/${courseId}/lessons/${lesson.id}`)}>
                                         <Edit2 className="h-4 w-4" />
                                         Edit
                                     </Button>

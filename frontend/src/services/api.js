@@ -59,7 +59,7 @@ export const api = createApi({
       query: () => "api/instructor/courses",
     }),
 
-    // get student courses  
+    // get student courses
     getStudentCourses: builder.query({
       query: () => "api/student/courses",
     }),
@@ -70,9 +70,9 @@ export const api = createApi({
     }),
 
     getCourseLessons: builder.query({
-      query: ({courseId}) => `api/lessons/course/${courseId}`,
+      query: ({ courseId }) => `api/public/lessons/course/${courseId}`,
     }),
-    
+
     // create lesson
     createLesson: builder.mutation({
       query: ({courseId, ...payload}) => ({
@@ -126,13 +126,13 @@ export const api = createApi({
         method: 'GET',
       }),
     }),
-  
+
     // upload video
     uploadVideo: builder.mutation({
-      query: ({lessonId}) => ({
-        url: `/lesson/${lessonId}/update`,
+      query: ({ lessonId, courseId }) => ({
+        url: `api/lesson/${lessonId}/course/${courseId}/video`,
         method: "POST",
-      })
+      }),
     }),
     getClientToken: builder.query({
       query: () => "api/payment/client-token",
