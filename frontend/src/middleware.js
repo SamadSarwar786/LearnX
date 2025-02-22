@@ -24,6 +24,6 @@ export const config = {
         '/dashboard',
         '/',
         '/dashboard/instructor',
-        '/dashboard/instructor/content'
+        '/dashboard/instructor/courses/:path*',
     ]
 }

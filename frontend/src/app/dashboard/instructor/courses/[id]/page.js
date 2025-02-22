@@ -26,7 +26,8 @@ import {
   useGetCategoriesQuery,
   useGetThumbnailUrlQuery,
   useUploadThumbnailImgMutation,
-  useUpdateCourseMutation
+  useUpdateCourseMutation,
+  api
 } from "@/services/api";
 import { useToast } from "@/components/hooks/use-toast";
 import { useSelector } from "react-redux";
@@ -35,9 +36,9 @@ import { getCourseById } from "@/store/slices/coursesSlice";
 export default function ContentUpload() {
   const params = useParams();
   const router = useRouter();
-  const courseId = params.courseId;
+  const courseId = params.id;
   const { toast } = useToast();
-  const { data: thumbnailUrl, isLoading: thumbnailUrlLoading } = useGetThumbnailUrlQuery({ courseId });
+  const [getThumbnailUrl, { data: thumbnailUrl, isLoading: thumbnailUrlLoading }] = api.endpoints.getThumbnailUrl.useLazyQuery();
   const [uploadThumbnailImg] = useUploadThumbnailImgMutation();
   const [updateCourse] = useUpdateCourseMutation();
 
@@ -54,6 +55,8 @@ export default function ContentUpload() {
 
   const handleUploadThumbnail = async () => {
     if (!selectedFile) return;
+
+    await getThumbnailUrl({ courseId });
 
     try {
       // Check if we have the pre-signed URL
@@ -173,6 +176,7 @@ export default function ContentUpload() {
                 id="title"
                 value={title}
                 placeholder="Enter content title"
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
 
@@ -181,6 +185,7 @@ export default function ContentUpload() {
               <Textarea
                 id="description"
                 value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe what this content is about"
                 className="min-h-[100px]"
               />
