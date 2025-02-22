@@ -21,6 +21,7 @@ import {
   api,
 } from "@/services/api";
 import { useToast } from "@/components/hooks/use-toast";
+import { useSelector } from "react-redux";
 
 export default function LessonUpload() {
   const params = useParams();
@@ -31,15 +32,7 @@ export default function LessonUpload() {
   const router = useRouter();
   const { toast } = useToast();
 
-  console.log(lessonId, "courseId", courseId);
-
-  const lesson = {
-    id: 1,
-    title: "Lesson 1",
-    description: "Lesson 1 description",
-    isFree: false,
-    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  };
+  const lesson = useSelector((state) => state.general.selectedLesson);
 
   // State variables
   const [title, setTitle] = useState(lesson?.title || "");

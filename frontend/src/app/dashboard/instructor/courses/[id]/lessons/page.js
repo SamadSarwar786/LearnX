@@ -26,6 +26,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useToast } from "@/components/hooks/use-toast";
 import { Loader2, Plus, Edit2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { setSelectedLesson } from "@/store/slices/generalSlice";
+import { useDispatch } from "react-redux";
 
 export default function Lessons() {
     const params = useParams();
@@ -40,6 +42,7 @@ export default function Lessons() {
     const { data: response, isLoading: lessonsLoading } = useGetCourseLessonsQuery({ courseId });
     const lessons = response?.lessons || [];
     const [updateLesson] = useUpdateLessonMutation();
+    const dispatch = useDispatch();
 
     const handleCreateLesson = async () => {
         try {
@@ -59,6 +62,8 @@ export default function Lessons() {
                     title: "Lesson Created!",
                     description: response.message || "Lesson Successfully created! Please add your content",
                 });
+
+                dispatch(setSelectedLesson(response));
 
                 router.push(
                     `/dashboard/instructor/courses/${courseId}/lessons/${response.id}`
@@ -174,7 +179,10 @@ export default function Lessons() {
                                     </p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/instructor/courses/${courseId}/lessons/${lesson.id}`)}>
+                                    <Button variant="outline" size="sm" onClick={() => {
+                                         dispatch(setSelectedLesson(lesson))
+                                         router.push(`/dashboard/instructor/courses/${courseId}/lessons/${lesson.id}`)
+                                        }}>
                                         <Edit2 className="h-4 w-4" />
                                         Edit
                                     </Button>
