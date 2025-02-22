@@ -113,7 +113,7 @@ export default function LessonUpload() {
         description: "Lesson updated successfully!",
       });
 
-      router.push(`/dashboard/instructor/course/${courseId}`);
+      router.push(`/dashboard/instructor/courses/${courseId}/lessons`);
     } catch (error) {
       toast({
         variant: "destructive",

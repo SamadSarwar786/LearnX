@@ -20,6 +20,7 @@ export const api = createApi({
       return response.json(); // Handle JSON responses as usual
     }
   }),
+  tagTypes : ["Course", "Lesson"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
@@ -43,6 +44,7 @@ export const api = createApi({
         method: "POST",
         body: payload,
       }),
+      // invalidatesTags: (result, error, arg) => [{ type: 'Course', id: arg.id }],
     }),
 
     // update course
@@ -52,11 +54,16 @@ export const api = createApi({
         method: "PUT",
         body: payload,
       }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Course', id: arg.id }],
     }),
 
     // get instructor courses
     getInstructorCourses: builder.query({
       query: () => "api/instructor/courses",
+      providesTags: (result, error, arg) =>
+        result
+          ? [...result.map(({ id }) => ({ type: 'Course', id })), 'Course']
+          : ['Course'],
     }),
 
     // get student courses
@@ -71,6 +78,10 @@ export const api = createApi({
 
     getCourseLessons: builder.query({
       query: ({ courseId }) => `api/public/lessons/course/${courseId}`,
+      providesTags: (result, error, arg) =>
+        result && result.lessons
+          ? [...result.lessons.map(({ id }) => ({ type: 'Lesson', id })), 'Lesson']
+          : ['Lesson'],
     }),
 
     // create lesson
@@ -80,6 +91,7 @@ export const api = createApi({
         method: "POST",
         body: payload,
       }),
+      // invalidatesTags: ['Lesson'],
     }),
 
     // update lessons
@@ -89,6 +101,7 @@ export const api = createApi({
         method: "PUT",
         body: payload,
       }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Lesson', id: arg.id }],
     }),
 
     getCategories: builder.query({

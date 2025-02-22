@@ -172,7 +172,7 @@ export default function Lessons() {
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2">
                                         <h4 className="font-semibold">{lesson.title}</h4>
-                                        <Badge variant={lesson.isPaid ? "default" : "secondary"}>{lesson.isPaid ? "Paid" : "Free"}</Badge>
+                                        <Badge variant={lesson.isFree ? "secondary" : "default"}>{lesson.isFree ? "Free" : "Paid"}</Badge>
                                     </div>
                                     <p className="text-sm text-muted-foreground">
                                         {lesson.description}
