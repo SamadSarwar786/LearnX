@@ -20,6 +20,7 @@ export default function CoursePage() {
   const courseId = Number(id);
   const course = useSelector((state) => getCourseById(state, courseId));
 
+  console.log("purchase course", course);
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}

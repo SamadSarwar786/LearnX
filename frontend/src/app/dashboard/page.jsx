@@ -5,13 +5,60 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Clock, Trophy } from "lucide-react";
 import Link from "next/link";
 import { WelcomeSection } from "@/components/WelcomeSection";
-import { useGetStudentCoursesQuery } from "@/services/api";
+import { useGetStudentCoursesQuery, useGetCourseLessonsQuery, useGetPublicCoursesQuery } from '@/services/api';
 import { useRouter } from "next/navigation";
 import { CourseCard } from "@/components/courseCard";
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedLesson, setSelectedCourseId } from '@/store/slices/generalSlice';
+import { useState } from 'react';
+import { useToast } from "@/components/hooks/use-toast";
+
 function DashboardPage() {
+  const [selectedCourseId, setLocalCourseId] = useState(null);
   const { data: studentCourses, isLoading: studentCoursesLoading } = useGetStudentCoursesQuery();
+  const { data: publicCourses, isLoading: publicCoursesLoading } = useGetPublicCoursesQuery();
+  const { data: lessonsData, isLoading: lessonsLoading } = useGetCourseLessonsQuery(
+    { courseId: selectedCourseId },
+    { skip: !selectedCourseId }
+  );
+
   const router = useRouter();
-  
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+  const hasPurchased = true;
+
+  const handleCourseClick = async (courseId) => {
+    if (!hasPurchased) {
+      router.push(`/courses/${courseId}/purchase`);
+      return;
+    }
+
+    try {
+      setLocalCourseId(courseId);
+      dispatch(setSelectedCourseId(courseId));
+      
+      if (lessonsData?.lessons?.length > 0) {
+        const firstLesson = lessonsData.lessons[0];
+        dispatch(setSelectedLesson(firstLesson));
+        router.push(`/courses/${courseId}/lessons/${firstLesson.id}`);
+      } else {
+        router.push("/courses");
+        toast({
+          variant: "destructive",
+          title: "No Lessons Available",
+          description: "This course doesn't have any lessons yet.",
+        });
+      }
+    } catch (error) {
+      router.push('/courses');
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load course lessons.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -55,10 +102,15 @@ function DashboardPage() {
 
         {studentCourses?.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {studentCourses.map((course) => (
-              <Link key={course.id} href={`/courses/${course.id}`}>
-                <CourseCard key={course.id} {...course} />
-              </Link>
+            {/* here check if the course is purchased or not if purchased then show the course lesson page */}
+            {studentCourses?.map((course) => (
+              <div
+                key={course.id}
+                onClick={() => handleCourseClick(course.id)}
+                className="cursor-pointer"
+              >
+                <CourseCard {...course} />
+              </div>
             ))}
           </div>
         ) : (
