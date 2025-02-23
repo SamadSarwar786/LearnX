@@ -43,7 +43,7 @@ export default function LessonUpload() {
     lesson?.videoUrl || ""
   );
 
-  const [getVideoUrl, { data: videoUrl, isLoading: videoUrlLoading }] =
+  const [getVideoUrl, { isLoading: videoUrlLoading }] =
     api.endpoints.getVideoUrl.useLazyQuery();
 
   const [uploadVideo] = useUploadVideoMutation();
@@ -72,7 +72,7 @@ export default function LessonUpload() {
     if (!selectedFile) return;
 
 
-    await getVideoUrl({ lessonId, courseId });
+    const videoUrl = await getVideoUrl({ lessonId, courseId }).unwrap();
 
     try {
       const response = await fetch(videoUrl, {

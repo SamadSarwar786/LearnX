@@ -38,7 +38,7 @@ export default function ContentUpload() {
   const router = useRouter();
   const courseId = params.id;
   const { toast } = useToast();
-  const [getThumbnailUrl, { data: thumbnailUrl, isLoading: thumbnailUrlLoading }] = api.endpoints.getThumbnailUrl.useLazyQuery();
+  const [getThumbnailUrl, { isLoading: thumbnailUrlLoading }] = api.endpoints.getThumbnailUrl.useLazyQuery();
   const [uploadThumbnailImg] = useUploadThumbnailImgMutation();
   const [updateCourse] = useUpdateCourseMutation();
 
@@ -56,7 +56,7 @@ export default function ContentUpload() {
   const handleUploadThumbnail = async () => {
     if (!selectedFile) return;
 
-    await getThumbnailUrl({ courseId });
+   const thumbnailUrl = await getThumbnailUrl({ courseId }).unwrap();
 
     try {
       // Check if we have the pre-signed URL
@@ -80,7 +80,7 @@ export default function ContentUpload() {
       // Update the course with the thumbnail URL using the mutation
       await uploadThumbnailImg({
         courseId,
-      }).unwrap();
+      });
 
       toast({
         variant: "success",
