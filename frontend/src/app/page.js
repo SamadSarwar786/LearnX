@@ -18,11 +18,11 @@ function Home() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Hero />
-        <CategorySection />
-          <CourseSection 
+        <CourseSection 
             title="Get choice of your course" 
             courses={publicCourses}
           />
+        <CategorySection />
         <NewsletterSection />
         <FAQSection />
       </main>
