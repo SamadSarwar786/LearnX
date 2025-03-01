@@ -8,9 +8,16 @@ import { Footer } from "@/components/Footer";
 import Hero from '@/components/Hero';
 import FAQSection from '@/components/FaqSection';
 import { useGetPublicCoursesQuery } from "@/services/api";
+import { useEffect } from "react";
+import { validateUser } from "@/store/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 function Home() {
   const { data: publicCourses, isLoading: publicCoursesLoading } = useGetPublicCoursesQuery();
+  const dispatch = useDispatch();
+  useEffect(() => {
+     dispatch(validateUser());
+  },[]);
   return (
     <div className="min-h-screen bg-slate-50">
       { /* Header */}

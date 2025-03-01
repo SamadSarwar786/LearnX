@@ -25,5 +25,6 @@ export const config = {
         '/',
         '/dashboard/instructor',
         '/dashboard/instructor/courses/:path*',
+        '/payment'
     ]
 }
