@@ -124,7 +124,7 @@ public class CourseService {
 
     public List<CourseLabelDto> getStudentOwnedCourses(Long studentId) {
         try {
-            List<Course> courses = courseRepo.findAll();
+            List<Course> courses = courseRepo.findAllCoursesByStudentId(studentId);
             return courses.stream().map(course -> {
                 CourseLabelDto courseLabelDto = modelMapper.map(course, CourseLabelDto.class);
                 courseLabelDto.setInstructorName(course.getInstructor().getName());
