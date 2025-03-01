@@ -2,6 +2,7 @@ import { configureStore, combineReducers} from '@reduxjs/toolkit';
 import userReducer from '@/store/slices/userSlice';
 import coursesReducer from '@/store/slices/coursesSlice';
 import generalReducer from '@/store/slices/generalSlice';
+import lessonsReducer from '@/store/slices/lessonSlice';
 import { api } from '@/services/api';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   courses: coursesReducer,
   general : generalReducer,
+  lessons: lessonsReducer,
   [api.reducerPath]: api.reducer,
 });
 

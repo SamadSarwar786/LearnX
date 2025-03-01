@@ -1,11 +1,15 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { api } from "@/services/api";
 
+// Create an entity adapter for lessons
 const lessonsAdapter = createEntityAdapter({
   selectId: (lesson) => lesson.id,
 });
 
-const initialState = lessonsAdapter.getInitialState();
+// Initial state with an object to store lessons by courseId
+const initialState = lessonsAdapter.getInitialState({
+  byCourseId: {}, // Store lesson IDs grouped by course ID
+});
 
 const lessonsSlice = createSlice({
   name: "lessons",
@@ -19,8 +23,9 @@ const lessonsSlice = createSlice({
     builder.addMatcher(
       api.endpoints.getCourseLessons.matchFulfilled,
       (state, { payload, meta: { arg: { courseId } } }) => {
-        lessonsAdapter.setAll(state, payload);
-        state.byCourseId[courseId] = payload;
+        const lessonsArray = Array.isArray(payload?.lessons) ? payload.lessons : [];
+        lessonsAdapter.setMany(state, lessonsArray); // Add lessons without erasing old ones
+        state.byCourseId[courseId] = lessonsArray.map((lesson) => lesson.id); // Store lesson IDs per course
       }
     );
   },
@@ -31,11 +36,6 @@ export const { setLessons } = lessonsSlice.actions;
 export const {
   selectAll: getAllLessons,
   selectById: getLessonById,
-  selectFromState: selectLessonsFromState,
 } = lessonsAdapter.getSelectors((state) => state.lessons);
-
-export const getLessonsByCourseId = (state, courseId) => {
-  return selectLessonsFromState(state, courseId) || [];
-};
 
 export default lessonsSlice.reducer;

@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const router = useRouter();
   return (
     <section className="w-full bg-slate-50">
       <div className="container px-4 py-12 md:py-16">
@@ -15,7 +16,7 @@ export default function Hero() {
               Invest in yourself. Courses as low as ₹449. From
               critical skills to technical topics, Learn at your own pace with LearnX.
             </p>
-            <Button>Start learning now</Button>
+            <Button onClick={() => router.push("/courses")}>Start learning now</Button>
           </div>
           <div className="relative">
             {/* <Image

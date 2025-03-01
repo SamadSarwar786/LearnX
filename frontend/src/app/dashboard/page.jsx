@@ -17,14 +17,8 @@ function DashboardPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const hasPurchased = true;
 
   const handleCourseClick = async (courseId) => {
-    if (!hasPurchased) {
-      router.push(`/courses/${courseId}/purchase`);
-      return;
-    }
-
     try {
       const {lessons} = await getLessons({ courseId }).unwrap();
       if (lessons.length > 0) {

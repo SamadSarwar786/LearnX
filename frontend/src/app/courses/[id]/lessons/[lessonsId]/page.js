@@ -4,6 +4,8 @@ import CourseSidebar from "@/components/CourseSidebar";
 import { useParams } from "next/navigation";
 import { api } from "@/services/api";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { getLessonById } from "@/store/slices/lessonSlice";
 
 export default function LessonPage() {
   const params = useParams();
@@ -12,27 +14,25 @@ export default function LessonPage() {
 
   const [lessons, setLessons] = useState([]);
 
-  const [ getLessons] = api.endpoints.getCourseLessons.useLazyQuery();
-  
-   useEffect(() => {
-      const fetchLessons = async () => {
-        const { lessons } = await getLessons({ courseId }).unwrap();
-        setLessons(lessons);
-      };
-  
-      fetchLessons();
-    }, [courseId, getLessons]);
+  const [getLessons] = api.endpoints.getCourseLessons.useLazyQuery();
 
-  const currentLesson = lessons.find(lesson => lesson.id === lessonId);
+  useEffect(() => {
+    const fetchLessons = async () => {
+      const { lessons } = await getLessons({ courseId }).unwrap();
+      setLessons(lessons);
+    };
 
-  const hasPurchased = false; 
+    fetchLessons();
+  }, [courseId, getLessons]);
+
+  const currentLesson = useSelector((state) => getLessonById(state, lessonId));
 
   return (
     <div className="flex h-screen bg-background">
       <CourseSidebar courseId={courseId} lessons={lessons} />
-     {currentLesson && <main className="flex-1 overflow-y-auto">
+      {currentLesson && <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-6">
-          <LessonPlayer 
+          <LessonPlayer
             courseId={courseId}
             lessonId={lessonId}
             lesson={currentLesson}

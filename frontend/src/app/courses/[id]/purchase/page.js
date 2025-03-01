@@ -20,7 +20,6 @@ export default function CoursePage() {
   const courseId = Number(id);
   const course = useSelector((state) => getCourseById(state, courseId));
 
-  console.log("purchase course", course);
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -147,9 +146,9 @@ export default function CoursePage() {
                 {/* add the course preview video here */}
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-3xl font-bold">${course?.price}</span>
+                    <span className="text-3xl font-bold">₹{course?.price}</span>
                     <span className="text-muted-foreground line-through">
-                      ${course?.price + 100}
+                    ₹{course?.price + 100}
                     </span>
                     <Badge>50% Off</Badge>
                   </div>
