@@ -43,8 +43,8 @@ export function CourseCard({ title, category, thumbnailUrl, price, instructorNam
             )}           
           </div>
           <div className="text-right">
-            <span className="text-muted-foreground line-through mr-2">${originalPrice}</span>
-            <span className="text-2xl font-bold text-purple-500">${price}</span>
+            <span className="text-muted-foreground line-through mr-2">₹{originalPrice}</span>
+            <span className="text-2xl font-bold text-purple-500">₹{price}</span>
           </div>
         </div>
       </CardContent>

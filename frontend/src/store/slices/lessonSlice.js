@@ -18,8 +18,9 @@ const lessonsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addMatcher(
       api.endpoints.getCourseLessons.matchFulfilled,
-      (state, action) => {
-        lessonsAdapter.setAll(state, action.payload);
+      (state, { payload, meta: { arg: { courseId } } }) => {
+        lessonsAdapter.setAll(state, payload);
+        state.byCourseId[courseId] = payload;
       }
     );
   },
@@ -30,12 +31,11 @@ export const { setLessons } = lessonsSlice.actions;
 export const {
   selectAll: getAllLessons,
   selectById: getLessonById,
+  selectFromState: selectLessonsFromState,
 } = lessonsAdapter.getSelectors((state) => state.lessons);
 
-// Selector to get lessons for current course
-export const getCurrentCourseLessons = (state) => {
-  const selectedCourseId = state.general.selectedCourseId;
-  return getAllLessons(state).filter(lesson => lesson.courseId === selectedCourseId);
+export const getLessonsByCourseId = (state, courseId) => {
+  return selectLessonsFromState(state, courseId) || [];
 };
 
 export default lessonsSlice.reducer;

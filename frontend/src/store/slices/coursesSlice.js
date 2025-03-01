@@ -45,10 +45,5 @@ export const {
   selectById: getCourseById, // Get course by ID
 } = coursesAdapter.getSelectors((state) => state.courses);
 
-// export const getLessonById = (courseId, lessonId) => (state) => {
-//   const course = getCourseById(state, courseId);
-//   return course?.lessons?.find(lesson => lesson.id === lessonId) || null;
-// };
-
 // Export reducer
 export default coursesSlice.reducer;

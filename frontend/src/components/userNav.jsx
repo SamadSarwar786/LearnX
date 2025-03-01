@@ -56,7 +56,7 @@ export function UserNav() {
               <DropdownMenuItem>My Dashboard</DropdownMenuItem>
             </Link>
           ) : (
-            <Link href="/dashboard/"> {/* here only show the courses that the user has purchased */}
+            <Link href="/dashboard"> {/* here only show the courses that the user has purchased */}
               <DropdownMenuItem>My Dashboard</DropdownMenuItem>
             </Link>
           )}

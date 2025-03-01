@@ -17,8 +17,7 @@ export default function FAQSection() {
               <AccordionTrigger className="text-left">How does LearnX online learning work?</AccordionTrigger>
               <AccordionContent>
                 LearnX provides flexible online courses that you can access anytime, anywhere. Our platform includes
-                video lectures, interactive assignments, quizzes, and hands-on projects. You can learn at your own pace
-                and track your progress through our user-friendly dashboard.
+                video lectures. You can learn at your own pace and track your progress through our user-friendly dashboard.
               </AccordionContent>
             </AccordionItem>
 
@@ -31,20 +30,11 @@ export default function FAQSection() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-3">
-              <AccordionTrigger className="text-left">Do I get a certificate upon completion?</AccordionTrigger>
-              <AccordionContent>
-                Yes! Upon successful completion of a course, you'll receive a verified digital certificate that you can
-                share on LinkedIn or add to your resume. Our certificates are recognized by leading companies worldwide.
-              </AccordionContent>
-            </AccordionItem>
-
             <AccordionItem value="item-4">
               <AccordionTrigger className="text-left">What are the payment options?</AccordionTrigger>
               <AccordionContent>
-                We accept all major credit cards, PayPal, and bank transfers. You can choose between a monthly
-                subscription that gives you access to all courses, or purchase individual courses. We also offer team
-                and enterprise pricing for organizations.
+                We accept all major credit cards, including Visa, Mastercard, and American Express. You can 
+                purchase individual courses.
               </AccordionContent>
             </AccordionItem>
 
@@ -59,9 +49,7 @@ export default function FAQSection() {
             <AccordionItem value="item-6">
               <AccordionTrigger className="text-left">Can I access courses on mobile devices?</AccordionTrigger>
               <AccordionContent>
-                Yes, LearnX is fully responsive and works on all devices. You can download our mobile app for iOS and
-                Android to access courses offline, track your progress, and receive notifications about new content and
-                deadlines.
+                Yes, LearnX is fully responsive and works on all devices.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -69,7 +57,7 @@ export default function FAQSection() {
           <div className="text-center pt-8">
             <p className="text-gray-500">
               Still have questions?{" "}
-              <a href="/contact" className="text-primary font-medium hover:underline">
+              <a href="mailto:saumyaverma578@gmail.com" className="text-primary font-medium hover:underline">
                 Contact our support team
               </a>
             </p>

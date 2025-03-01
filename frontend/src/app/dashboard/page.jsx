@@ -1,27 +1,19 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Clock, Trophy } from "lucide-react";
-import Link from "next/link";
-import { WelcomeSection } from "@/components/WelcomeSection";
-import { useGetStudentCoursesQuery, useGetCourseLessonsQuery, useGetPublicCoursesQuery } from '@/services/api';
+import { BookOpen, Clock } from "lucide-react";
+import { useGetStudentCoursesQuery, api } from '@/services/api';
 import { useRouter } from "next/navigation";
 import { CourseCard } from "@/components/courseCard";
-import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedLesson, setSelectedCourseId } from '@/store/slices/generalSlice';
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setSelectedLesson } from '@/store/slices/generalSlice';
 import { useToast } from "@/components/hooks/use-toast";
 
 function DashboardPage() {
-  const [selectedCourseId, setLocalCourseId] = useState(null);
   const { data: studentCourses, isLoading: studentCoursesLoading } = useGetStudentCoursesQuery();
-  const { data: publicCourses, isLoading: publicCoursesLoading } = useGetPublicCoursesQuery();
-  const { data: lessonsData, isLoading: lessonsLoading } = useGetCourseLessonsQuery(
-    { courseId: selectedCourseId },
-    { skip: !selectedCourseId }
-  );
-
+  const [ getLessons] = api.endpoints.getCourseLessons.useLazyQuery();
+   
   const router = useRouter();
   const dispatch = useDispatch();
   const { toast } = useToast();
@@ -34,11 +26,9 @@ function DashboardPage() {
     }
 
     try {
-      setLocalCourseId(courseId);
-      dispatch(setSelectedCourseId(courseId));
-      
-      if (lessonsData?.lessons?.length > 0) {
-        const firstLesson = lessonsData.lessons[0];
+      const {lessons} = await getLessons({ courseId }).unwrap();
+      if (lessons.length > 0) {
+        const firstLesson = lessons[0];
         dispatch(setSelectedLesson(firstLesson));
         router.push(`/courses/${courseId}/lessons/${firstLesson.id}`);
       } else {
@@ -90,16 +80,6 @@ function DashboardPage() {
       </div>
 
       <div className="w-full">
-        {/* <Card>
-          <CardHeader>
-            <CardTitle>Continue Learning</CardTitle>
-            <CardDescription>Pick up where you left off</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <WelcomeSection />
-          </CardContent>
-        </Card> */}
-
         {studentCourses?.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* here check if the course is purchased or not if purchased then show the course lesson page */}

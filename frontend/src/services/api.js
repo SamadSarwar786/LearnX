@@ -140,6 +140,14 @@ export const api = createApi({
       }),
     }),
 
+    // get url for get lesson
+    getUrlForGetLesson: builder.query({
+      query: ({lessonId}) => ({
+        url: `api/public/lesson/${lessonId}`,
+        method: 'GET',
+      }),
+    }),
+
     // upload video
     uploadVideo: builder.mutation({
       query: ({ lessonId, courseId }) => ({
@@ -147,6 +155,7 @@ export const api = createApi({
         method: "POST",
       }),
     }),
+
     getClientToken: builder.query({
       query: () => "api/payment/client-token",
     }),
@@ -179,4 +188,5 @@ export const {
   useCreateLessonMutation,
   useUpdateLessonMutation,
   useGetCourseLessonsQuery,
+  useGetUrlForGetLessonQuery,
 } = api;
