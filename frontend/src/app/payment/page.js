@@ -12,15 +12,16 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { getCourseById } from "@/store/slices/coursesSlice";
 import { useSelector } from "react-redux";
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 export default function Payment() {
   const [dropInInstance, setDropInInstance] = useState(null);
   const { toast } = useToast();
-  const searchParams = useSearchParams()
-  const courseId = searchParams.get('courseId')// Check if the router is ready
+  const searchParams = useSearchParams();
+  const courseId = searchParams.get("courseId"); // Check if the router is ready
   // Use useSelector only after router.query is available
-  const course =  useSelector((state) => getCourseById(state, courseId));
-    
+  const course = useSelector((state) => getCourseById(state, courseId));
+
   // Fetch client token from the backend
   const { data: clientToken, isLoading, isError } = useGetClientTokenQuery();
   const [processPayment, { isLoading: paymentProcessing, isSuccess }] =
@@ -73,9 +74,12 @@ export default function Payment() {
     }
   };
 
-
-  if(!clientToken){
-    return <div>Loading...</div>
+  if (!clientToken) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner size={"large"} />
+      </div>
+    );
   }
 
   return (
@@ -85,7 +89,7 @@ export default function Payment() {
         <div className="md:w-[580px]">
           <h1 className="text-2xl">Payment Methods</h1>
           {!isSuccess ? (
-              <div id="dropin-container"></div>
+            <div id="dropin-container"></div>
           ) : (
             <p>Payment Sucessfull</p>
           )}
@@ -111,8 +115,13 @@ export default function Payment() {
                 Terms of Service
               </Button>
             </p>
-            <Button onClick={handlePayment} loading={paymentProcessing} className="w-full" variant="default">
-             {paymentProcessing ? <> </>  : <Lock />} Complete Purchase
+            <Button
+              onClick={handlePayment}
+              loading={paymentProcessing}
+              className="w-full"
+              variant="default"
+            >
+              {paymentProcessing ? <> </> : <Lock />} Complete Purchase
             </Button>
           </div>
         </div>
