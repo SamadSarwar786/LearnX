@@ -154,7 +154,7 @@ export default function CoursePage() {
                     <Badge>50% Off</Badge>
                   </div>
                 </div>
-                <Button onClick={() => router.push("/payment")} className="w-full mb-4">Buy Now</Button>
+                <Button onClick={() => router.push(`/payment?courseId=${courseId}`)} className="w-full mb-4">Buy Now</Button>
                 <div className="space-y-4">
                   <h3 className="font-semibold">This Course Included</h3>
                   <ul className="space-y-2">

@@ -10,26 +10,17 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-const course = {
-  title: "Introduction to Php",
-  description: "Php is very good landuage",
-  isPublished: true,
-  thumbnailUrl:
-    "https://static.learnx.me/upload/instructor_6/course_12_thumbnail.jpg",
-  price: 250,
-  instructorName: "Arif Khan",
-  instructorId: 6,
-  category: {
-    id: 2,
-    name: "Design",
-    description:
-      "Learn the fundamentals of design and theory to create stunning visuals",
-  },
-  id: 12,
-};
+import { getCourseById } from "@/store/slices/coursesSlice";
+import { useSelector } from "react-redux";
+import { useSearchParams } from 'next/navigation'
 export default function Payment() {
   const [dropInInstance, setDropInInstance] = useState(null);
   const { toast } = useToast();
+  const searchParams = useSearchParams()
+  const courseId = searchParams.get('courseId')// Check if the router is ready
+  // Use useSelector only after router.query is available
+  const course =  useSelector((state) => getCourseById(state, courseId));
+    
   // Fetch client token from the backend
   const { data: clientToken, isLoading, isError } = useGetClientTokenQuery();
   const [processPayment, { isLoading: paymentProcessing, isSuccess }] =
