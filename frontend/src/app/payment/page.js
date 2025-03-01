@@ -46,7 +46,7 @@ export default function Payment() {
       const { nonce } = await dropInInstance.requestPaymentMethod();
       const response = await processPayment({
         nonce,
-        courseId: 4,
+        courseId,
       });
       if (response.data.status === "failure") {
         toast({
@@ -100,7 +100,7 @@ export default function Payment() {
             {/* Total */}
             <div className="flex justify-between">
               <p className="font-semibold">Total:</p>
-              <p className="font-semibold text-xl">$250.00</p>
+              <p className="font-semibold text-xl">${course.price}</p>
             </div>
           </div>
           {/* Complete Purchase Button */}

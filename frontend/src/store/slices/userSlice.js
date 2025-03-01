@@ -1,6 +1,8 @@
 import {cookiesList, removeCookie} from '@/lib';
 import {getJwt, getRefreshToken, getUserInfoFromToken, isValidJWT} from '@/lib/jwt';
 import {createSlice} from '@reduxjs/toolkit';
+import persistReducer from 'redux-persist/es/persistReducer';
+import localStorage from 'redux-persist/lib/storage';
 
 const initialState = {
 	user: null,
@@ -46,5 +48,10 @@ const userSlice = createSlice({
 });
 
 export const {loginStart, loginSuccess, loginFailure, logout, validateUser} = userSlice.actions;
-export const userReducer = userSlice.reducer;
-export default userSlice.reducer;
+
+const persistConfig = {
+	key: 'user',
+	storage: localStorage,
+}
+
+export default persistReducer(persistConfig, userSlice.reducer);

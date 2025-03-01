@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import persistReducer from "redux-persist/es/persistReducer";
+import sessionStorage from "redux-persist/es/storage/session";
 
 const initialState = {
     selectedLesson: null,
@@ -18,4 +20,10 @@ export const { setSelectedLesson } = generalSlice.actions;
 
 export const getSelectedLesson = (state) => state.general.selectedLesson;
 
-export default generalSlice.reducer;
+
+const persistConfig = {
+  key: "general",
+  storage: sessionStorage,
+}
+
+export default persistReducer(persistConfig, generalSlice.reducer);

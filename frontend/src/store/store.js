@@ -4,16 +4,7 @@ import coursesReducer from '@/store/slices/coursesSlice';
 import generalReducer from '@/store/slices/generalSlice';
 import lessonsReducer from '@/store/slices/lessonSlice';
 import { api } from '@/services/api';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
-const persistConfig = {
-  key: 'root',
-  storage,
-  // whitelist: ['user', 'courses'],
-  whitelist: ['user'],
-  
-};
+import { persistStore } from 'redux-persist';
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -23,10 +14,8 @@ const rootReducer = combineReducers({
   [api.reducerPath]: api.reducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 export const Store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

@@ -1,5 +1,7 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { api } from "@/services/api";
+import sessionStorage from "redux-persist/es/storage/session";
+import persistReducer from "redux-persist/es/persistReducer";
 
 // Create an entity adapter for lessons
 const lessonsAdapter = createEntityAdapter({
@@ -38,4 +40,9 @@ export const {
   selectById: getLessonById,
 } = lessonsAdapter.getSelectors((state) => state.lessons);
 
-export default lessonsSlice.reducer;
+const persistConfig = {
+  key: "lessons",
+  storage: sessionStorage,
+}
+
+export default persistReducer(persistConfig, lessonsSlice.reducer);
