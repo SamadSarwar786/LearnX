@@ -47,10 +47,11 @@ public class LessonService {
         try {
             List<Lesson> lessons = lessonRepo.findAllByCourseId(courseId);
             AllLessonsResponseDto res = new AllLessonsResponseDto();
-            if (user != null && enrollmentService.isUserEnrolled(courseId, user.getId())) {
-                res.setIsPaid(true);
-            }
+            boolean isPaid = user != null && enrollmentService.isUserEnrolled(courseId, user.getId());
+            lessons = lessons.stream().peek((lesson -> lesson.setIsFree(isPaid)
+                    )).toList();
             res.setLessons(lessons);
+            res.setIsPaid(isPaid);
             return res;
         } catch (Exception e) {
             throw new RuntimeException("Error while getting lessons " + e.getMessage(), e);
