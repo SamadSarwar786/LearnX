@@ -11,6 +11,7 @@ import { Header } from "@/components/Header";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { getCourseById } from "@/store/slices/coursesSlice";
+import { selectedCourse } from "@/store/slices/coursesSlice";
 
 export default function CoursePage() {
   const params = useParams();
@@ -18,7 +19,8 @@ export default function CoursePage() {
   const { id } = params;
 
   const courseId = Number(id);
-  const course = useSelector((state) => getCourseById(state, courseId));
+
+  const course = useSelector((state) => state.courses.selectedCourse);
 
   return (
     <div className="min-h-screen bg-white">

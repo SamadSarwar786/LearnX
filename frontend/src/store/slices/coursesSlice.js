@@ -6,10 +6,13 @@ import persistReducer from "redux-persist/es/persistReducer";
 // Create an entity adapter for courses
 const coursesAdapter = createEntityAdapter({
   selectId: (course) => course.id,
-})
+});
 
 // Get initial state from the adapter
-const initialState = coursesAdapter.getInitialState();
+const initialState = {
+  ...coursesAdapter.getInitialState(),
+  selectedCourse: null,
+};
 
 const coursesSlice = createSlice({
   name: "courses",
@@ -21,7 +24,12 @@ const coursesSlice = createSlice({
     addCourse: (state, action) => {
       coursesAdapter.addOne(state, action.payload); // Add a new course
     },
+    setSelectedCourse: (state, action) => {
+      console.log('Setting selected course:', action.payload);
+      state.selectedCourse = action.payload;
+    },
   },
+
   extraReducers: (builder) => {
     builder.addMatcher(
       api.endpoints.getPublicCourses.matchFulfilled,
@@ -39,7 +47,8 @@ const coursesSlice = createSlice({
 });
 
 // Export actions
-export const { setCourses, addCourse } = coursesSlice.actions;
+export const { setCourses, addCourse, setSelectedCourse } =
+  coursesSlice.actions;
 
 // Export selectors
 export const {

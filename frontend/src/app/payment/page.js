@@ -85,7 +85,7 @@ export default function Payment() {
   return (
     <div>
       <Header />
-      <div className="flex flex-col md:flex-row  px-4 py-8 m-auto max-w-7xl md:justify-center gap-5">
+      <div className="flex flex-col md:flex-row px-4 py-8 m-auto max-w-7xl md:justify-center gap-5 min-h-screen">
         <div className="md:w-[580px]">
           <h1 className="text-2xl">Payment Methods</h1>
           {!isSuccess ? (
@@ -100,7 +100,7 @@ export default function Payment() {
             {/* Total */}
             <div className="flex justify-between">
               <p className="font-semibold">Total:</p>
-              <p className="font-semibold text-xl">${course.price}</p>
+              <p className="font-semibold text-xl">₹{course.price}</p>
             </div>
           </div>
           {/* Complete Purchase Button */}

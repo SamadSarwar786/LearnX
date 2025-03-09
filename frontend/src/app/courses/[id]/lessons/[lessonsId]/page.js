@@ -29,22 +29,37 @@ export default function LessonPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      <CourseSidebar courseId={courseId} lessons={lessons} />
-      {currentLesson && <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-4 py-6">
-          <LessonPlayer
-            courseId={courseId}
-            lessonId={lessonId}
-            lesson={currentLesson}
-          />
-          <div className="mt-6">
-            <h1 className="text-2xl font-bold text-foreground">
-              {currentLesson.title}
-            </h1>
-            <p className="mt-2 text-muted-foreground">{currentLesson.description}</p>
+      {lessons.length > 0 && <CourseSidebar courseId={courseId} lessons={lessons} />}
+      {lessons.length === 0 ? (
+        <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto px-4 py-6 h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="text-2xl font-bold text-foreground">
+                No Lessons Available
+              </h1>
+              <p className="mt-2 text-muted-foreground">
+                There are no lessons available for this course yet.
+              </p>
+            </div>
           </div>
-        </div>
-      </main>}
+        </main>
+      ) : (
+        currentLesson && <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto px-4 py-6">
+            <LessonPlayer
+              courseId={courseId}
+              lessonId={lessonId}
+              lesson={currentLesson}
+            />
+            <div className="mt-6">
+              <h1 className="text-2xl font-bold text-foreground">
+                {currentLesson.title}
+              </h1>
+              <p className="mt-2 text-muted-foreground">{currentLesson.description}</p>
+            </div>
+          </div>
+        </main>
+      )}
     </div>
   );
 }
