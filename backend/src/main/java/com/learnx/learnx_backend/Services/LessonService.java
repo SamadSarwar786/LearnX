@@ -48,7 +48,7 @@ public class LessonService {
             List<Lesson> lessons = lessonRepo.findAllByCourseId(courseId);
             AllLessonsResponseDto res = new AllLessonsResponseDto();
             boolean isPaid = user != null && enrollmentService.isUserEnrolled(courseId, user.getId());
-            lessons = lessons.stream().peek((lesson -> lesson.setIsFree(isPaid)
+            lessons = lessons.stream().peek((lesson -> lesson.setIsFree(isPaid || lesson.getIsFree())
                     )).toList();
             res.setLessons(lessons);
             res.setIsPaid(isPaid);
