@@ -60,7 +60,7 @@ export function LoginForm() {
           description: response.message || "Successfully logged in!",
         });
 
-        router.push("/");
+        response.role === 'INSTRUCTOR' ? router.push("/dashboard/instructor") : router.push("/");
       }
     } catch (error) {
       console.error("Login failed", error);
